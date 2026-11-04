@@ -1283,7 +1283,7 @@ paintSound();
 
 // #demo δείχνει κατευθείαν μια κάρτα drop (για έλεγχο της εμφάνισης)
 if (location.hash === '#demo'){
-  state.ex = exById('farmer'); state.tier = 3; state.roll = { v: 55, lo: 50, hi: 60 }; state.phase = 'result';
+  state.ex = exById('farmer'); state.tier = 3; state.roll = roll(state.ex, 3); state.phase = 'result';
   wheel1.winner = 'farmer'; wheel2.winner = 't3';
 }
 render();
