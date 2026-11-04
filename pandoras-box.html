@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap">
 <style>
-/* Layout: arcade night. Δύο τροχοί (άσκηση / rarity) δίπλα-δίπλα ή στοίβα στο κινητό, από κάτω η κάρτα του drop
-   με video και meme στο πλάι, μετά ο πίνακας drop, η σημερινή λίστα και οι ρυθμίσεις.
+/* Layout: arcade night. Δύο τροχοί (άσκηση / rarity) δίπλα-δίπλα ή στοίβα στο κινητό. Η άσκηση βγαίνει από κουτί
+   που ανοίγει, ο τρίτος τροχός (σετ) και η κάρτα του drop εμφανίζονται από κάτω, με video και meme στο πλάι.
    Μία σκούρα εμφάνιση επίτηδες: χρυσό για ό,τι πατιέται, τα χρώματα rarity για ό,τι πέφτει. */
 :root{
   --bg:#100d24;
@@ -16,6 +16,7 @@
   --muted:#aaa2dc;
   --ink:#100d24;
   --gold:#ffcc33;
+  --gold-hi:#ffd75c;
   --gold-deep:#b98500;
   --r0:#a9b2bf;
   --r1:#36d47c;
@@ -27,6 +28,7 @@
   --g-biceps:#9a3b8e;
   --g-push:#a2661b;
   --g-cardio:#3c4ca0;
+  --scrim:rgba(8,6,20,.88);
   --meme-paper:#ffffff;
   --meme-text:#111111;
   --meme-edge:#000000;
@@ -64,22 +66,22 @@ a{color:var(--gold)}
 .wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:18px 48px;display:grid;gap:26px}
 @media (min-width:720px){.wrap{padding-inline:28px}}
 /* μονόστηλα grid: η στήλη δεν φαρδαίνει από το μεγαλύτερο κείμενο */
-.wrap,.play,.panel,.reveal-info,.loot-inner,.loot-main,.loot-side,.timer,.log-block,.set-body,.odds,.bottom,.brand,.xp{grid-template-columns:minmax(0,1fr)}
+.wrap,.play,.panel,.reveal-info,.reps-info,.loot-inner,.loot-main,.loot-side,.timer,.log-block,.set-body,.odds,.brand,.xp,.ov-card{grid-template-columns:minmax(0,1fr)}
 
 /* header */
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px}
 .brand{display:grid;gap:8px;min-width:0}
 .logo{font-family:var(--display);font-weight:400;font-size:clamp(3rem,11vw,5.4rem);line-height:.9;letter-spacing:.03em;transform:rotate(-2deg);transform-origin:left center;text-shadow:0 5px 0 var(--panel-2),0 12px 20px rgba(0,0,0,.45)}
 .logo span{color:var(--gold);text-shadow:0 5px 0 var(--gold-deep),0 12px 20px rgba(0,0,0,.45)}
-.tag{color:var(--muted);max-width:46ch}
-.player{flex:0 1 400px;min-width:min(100%,320px);display:flex;align-items:center;gap:12px;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 5px 0 rgba(0,0,0,.35)}
+.tag{color:var(--muted);font-size:1.05rem}
+.player{flex:0 1 380px;min-width:min(100%,300px);display:flex;align-items:center;gap:12px;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 5px 0 rgba(0,0,0,.35)}
 .lvl{flex:none;width:60px;height:60px;border-radius:14px;background:var(--gold);color:var(--ink);box-shadow:0 4px 0 var(--gold-deep);display:grid;place-items:center;align-content:center;gap:2px}
 .lvl-label{font-family:var(--display);font-size:.85rem;line-height:1;letter-spacing:.1em}
 .lvl-num{font-family:var(--display);font-size:2rem;line-height:.85}
 .xp{flex:1;min-width:0;display:grid;gap:6px}
 .xp-bar{height:14px;border-radius:999px;background:var(--bg);border:2px solid var(--line);overflow:hidden}
 .xp-bar span{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--r4));transition:width .6s cubic-bezier(.2,.8,.2,1)}
-.xp-text{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.xp-text{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .sound{flex:none;width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--panel-2);cursor:pointer;display:grid;place-items:center;color:var(--muted)}
 .sound[aria-pressed="true"]{color:var(--gold)}
 .sound svg{width:22px;height:22px}
@@ -87,7 +89,7 @@ a{color:var(--gold)}
 /* cards & buttons */
 .card{background:var(--panel);border:2px solid var(--line);border-radius:22px;box-shadow:0 6px 0 rgba(0,0,0,.35)}
 .btn{border:0;border-radius:14px;padding:13px 20px 9px;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:400;font-size:1.65rem;letter-spacing:.07em;line-height:1;cursor:pointer;box-shadow:0 6px 0 var(--gold-deep);transition:transform .08s,box-shadow .08s,background .2s}
-.btn:hover:not(:disabled){background:#ffd75c}
+.btn:hover:not(:disabled){background:var(--gold-hi)}
 .btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 var(--gold-deep)}
 .btn:disabled{background:var(--panel-2);color:var(--muted);box-shadow:0 6px 0 rgba(0,0,0,.3);cursor:not-allowed}
 .btn-ghost{background:var(--panel-2);color:var(--fg);box-shadow:0 6px 0 rgba(0,0,0,.45)}
@@ -95,8 +97,6 @@ a{color:var(--gold)}
 .btn-ghost:active:not(:disabled){box-shadow:0 2px 0 rgba(0,0,0,.45)}
 .link{justify-self:start;background:none;border:0;padding:4px 0;color:var(--gold);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.88rem}
 .link:disabled{opacity:.5;cursor:not-allowed}
-.chip{justify-self:start;display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:800;letter-spacing:.08em;padding:4px 10px;border-radius:999px;background:var(--bg);border:2px solid var(--line);white-space:nowrap}
-.chip i{width:10px;height:10px;border-radius:3px;background:var(--c,var(--gold))}
 
 /* wheels */
 .play{display:grid;gap:22px}
@@ -111,66 +111,48 @@ a{color:var(--gold)}
 .wheel canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer}
 .pointer{position:absolute;left:50%;top:-12px;width:34px;height:40px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 3px 0 rgba(0,0,0,.45))}
 .spin{width:min(100%,380px)}
-.hint{font-size:.82rem;color:var(--muted);text-align:center}
-.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;width:min(100%,380px)}
-.rarity{list-style:none;margin:0;padding:0;width:min(100%,380px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-.rarity li{min-width:0;display:grid;justify-items:center;gap:3px;padding:8px 2px 6px;border-radius:12px;background:var(--bg);border:2px solid color-mix(in srgb,var(--tier) 55%,transparent)}
-.rarity .stars{font-size:.62rem}
-.rarity .rn{font-family:var(--display);font-size:.8rem;letter-spacing:.04em;line-height:1;color:var(--tier)}
-.rarity .pc{font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums}
 
-/* verdict panels */
+/* panels */
 .verdict{min-width:0}
 .panel{padding:clamp(16px,3.5vw,28px);display:grid;gap:14px}
 .panel[data-t]{border-color:var(--tier)}
-.kicker{font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.title{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,7vw,3.5rem);line-height:.95;letter-spacing:.03em}
-.next{max-width:62ch}
-.fine{font-size:.82rem;color:var(--muted);max-width:66ch}
-.last{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);padding-bottom:12px;border-bottom:2px solid var(--line)}
-.rates{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.rates li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--bg);border:2px solid color-mix(in srgb,var(--tier) 45%,transparent)}
-.rates .stars{font-size:.8rem}
-.rates .meta{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
-.rates .r-text{grid-column:1 / -1;font-size:.92rem}
-.reveal{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
-@media (min-width:820px){.reveal{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
-.reveal-info{display:grid;gap:12px;align-content:start}
+.kicker{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.title{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,8vw,3.8rem);line-height:.95;letter-spacing:.03em}
+.taunt{font-size:1.1rem;color:var(--muted);max-width:52ch}
+.last{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.92rem;color:var(--muted);padding-bottom:12px;border-bottom:2px solid var(--line)}
 .ex-name{font-family:var(--display);font-weight:400;font-size:clamp(2.5rem,8.5vw,4.2rem);line-height:.9;letter-spacing:.03em}
-.how{color:var(--muted);max-width:62ch}
-.ladder{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.ladder li{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:10px;background:var(--bg);font-size:.88rem;font-variant-numeric:tabular-nums}
-.ladder .tb{min-width:7.6em;text-align:center}
+.reveal-info,.reps-info{display:grid;gap:12px;align-content:start}
 .reps-panel{align-items:center}
 @media (min-width:820px){.reps-panel{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
-.reps-info{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start}
 .reps-wheel{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:14px}
 
 /* loot card */
 .loot{position:relative;overflow:hidden;border:3px solid var(--tier);border-radius:22px;background:var(--panel);box-shadow:0 0 0 4px color-mix(in srgb,var(--tier) 22%,transparent),0 0 44px -6px var(--tier),0 8px 0 rgba(0,0,0,.4);animation:pop .45s cubic-bezier(.2,.8,.2,1) both}
 .loot[data-t="3"]::before,.loot[data-t="4"]::before{content:"";position:absolute;left:50%;top:50%;width:220%;aspect-ratio:1/1;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--tier) 14%,transparent) 0deg 9deg,transparent 9deg 18deg);animation:rays 24s linear infinite;pointer-events:none}
-.loot-banner{position:relative;z-index:1;background:var(--tier);color:var(--ink);font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,6vw,2.3rem);letter-spacing:.07em;line-height:1;text-align:center;padding:10px 12px 6px;overflow:hidden}
+.loot-banner{position:relative;z-index:1;background:var(--tier);color:var(--ink);font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,6vw,2.3rem);letter-spacing:.07em;line-height:1.05;text-align:center;padding:10px 12px 6px;overflow:hidden}
 .loot-banner .stars{color:var(--ink);font-size:.75em;margin-right:6px}
 .loot-banner::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 2.4s ease-in-out .3s infinite}
 .loot-inner{position:relative;z-index:1;padding:clamp(16px,3.5vw,28px);display:grid;gap:22px}
 @media (min-width:820px){.loot-inner{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}}
-.loot-main{display:grid;gap:12px;min-width:0;align-content:start}
+.loot-main{display:grid;gap:14px;min-width:0;align-content:start}
 .loot-side{display:grid;gap:16px;min-width:0;justify-items:center;align-content:start}
 .stat{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
-.stat-num{font-family:var(--display);font-weight:400;font-size:clamp(4.6rem,17vw,7.6rem);line-height:.85;letter-spacing:.02em;font-variant-numeric:tabular-nums;text-shadow:0 5px 0 rgba(0,0,0,.45),0 0 34px var(--tier)}
-.stat-unit{font-weight:800;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.kg{align-self:center;font-weight:800;font-size:.95rem;color:var(--ink);background:var(--gold);border-radius:999px;padding:5px 12px;white-space:nowrap;box-shadow:0 3px 0 var(--gold-deep)}
-.roll{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.roll b{font-family:var(--display);font-weight:400;font-size:1.05rem;letter-spacing:.07em;line-height:1;padding:4px 8px 2px;border-radius:6px;background:var(--gold);color:var(--ink)}
-.roll b.low{background:var(--panel-2);color:var(--fg)}
-.rule{max-width:62ch}
-.rule b{color:var(--gold)}
-.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.stat-num{font-family:var(--display);font-weight:400;font-size:clamp(4.4rem,16vw,7.4rem);line-height:.85;letter-spacing:.02em;font-variant-numeric:tabular-nums;text-shadow:0 5px 0 rgba(0,0,0,.45),0 0 34px var(--tier)}
+.stat-unit{font-weight:800;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pills:empty{display:none}
+.kg,.pill{font-weight:800;font-size:.92rem;border-radius:999px;padding:5px 12px;white-space:nowrap}
+.kg{color:var(--ink);background:var(--gold);box-shadow:0 3px 0 var(--gold-deep)}
+.pill{background:var(--bg);border:2px solid var(--tier)}
+.pill.hot{background:var(--r4);border-color:var(--r4);color:var(--ink)}
+.rule{color:var(--muted);max-width:62ch}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
 .actions .btn{flex:1 1 170px}
 
-/* timer */
+/* σετ & χρονόμετρο */
 .timer{display:grid;gap:10px;padding:14px;border-radius:16px;background:var(--bg);border:2px solid var(--line);max-width:440px}
-.t-top{display:flex;justify-content:space-between;gap:12px;font-size:.74rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.t-top{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dots{color:var(--tier,var(--gold));letter-spacing:.15em}
 .t-face{font-family:var(--display);font-weight:400;font-size:clamp(3rem,12vw,4.2rem);line-height:.9;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .t-face.prep{color:var(--gold)}
 .t-bar{height:10px;border-radius:999px;background:var(--panel-2);overflow:hidden}
@@ -189,7 +171,6 @@ a{color:var(--gold)}
 .video-cta .play{flex:none;width:46px;height:46px;border-radius:50%;background:var(--gold);box-shadow:0 4px 0 var(--gold-deep);display:grid;place-items:center}
 .video-cta .play::before{content:"";margin-left:4px;border-style:solid;border-width:9px 0 9px 15px;border-color:transparent transparent transparent var(--ink)}
 .video-cta b{display:block;font-size:1rem}
-.video-cta small{color:var(--muted)}
 
 /* memes */
 .meme{margin:0;width:100%;max-width:460px;display:grid;grid-template-columns:minmax(0,1fr);border-radius:14px;overflow:hidden;background:var(--meme-paper);box-shadow:0 6px 0 rgba(0,0,0,.4);transform:rotate(-1deg)}
@@ -207,14 +188,26 @@ a{color:var(--gold)}
 .mbox.ink{font-family:var(--meme-ink);font-weight:700;color:var(--meme-text)}
 .mbox.sub{font-family:var(--meme-ink);font-weight:700;color:var(--meme-paper);text-shadow:0 .05em .2em var(--meme-edge),0 0 .12em var(--meme-edge)}
 
+/* το κουτί */
+.box-ov{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;background:var(--scrim);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.ov-stage{position:relative;width:min(100%,460px);display:grid;justify-items:center}
+.pbox{width:min(70vw,260px);height:auto;overflow:visible;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6));transform-origin:50% 90%;transition:opacity .4s .35s}
+.pbox .b-fill{fill:var(--panel-2);stroke:var(--gold);stroke-width:3}
+.pbox .b-trim{fill:var(--gold)}
+.pbox .b-lock{fill:var(--gold-deep);stroke:var(--gold);stroke-width:2}
+.pbox .b-key{fill:var(--ink)}
+.pbox-lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .5s cubic-bezier(.2,1.4,.4,1)}
+.ov-burst{position:absolute;left:50%;top:45%;width:min(140vw,640px);aspect-ratio:1/1;transform:translate(-50%,-50%) scale(.2);opacity:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,204,51,.32) 0deg 10deg,transparent 10deg 20deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 68%);mask:radial-gradient(circle,#000 18%,transparent 68%);transition:opacity .4s,transform .6s;pointer-events:none}
+.ov-card{position:absolute;left:50%;top:50%;width:min(92vw,440px);max-height:88vh;overflow:auto;display:grid;gap:12px;justify-items:center;text-align:center;padding:18px;border-radius:22px;background:var(--panel);border:3px solid var(--gold);box-shadow:0 0 50px -6px var(--gold),0 8px 0 rgba(0,0,0,.4);opacity:0;pointer-events:none;transform:translate(-50%,-25%) scale(.2);transition:transform .45s cubic-bezier(.2,1.3,.4,1) .15s,opacity .3s .15s}
+.ov-card .ex-name{color:var(--gold)}
+.ov-stage.shake .pbox{animation:boxshake .9s ease-in-out}
+.ov-stage.open .pbox{opacity:.3}
+.ov-stage.open .pbox-lid{transform:translate(-14px,-80px) rotate(-30deg)}
+.ov-stage.open .ov-burst{opacity:1;transform:translate(-50%,-50%) scale(1);animation:burst 12s linear infinite}
+.ov-stage.open .ov-card{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+
 /* drop table */
-.drops-block summary,.settings summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--line)}
-.drops-block summary::-webkit-details-marker,.settings summary::-webkit-details-marker{display:none}
-.drops-block summary::after,.settings summary::after{content:"+";font-family:var(--display);font-size:1.6rem;line-height:1;color:var(--gold)}
-.drops-block[open] summary::after,.settings[open] summary::after{content:"\2212"}
-.sum-title{font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.05em;line-height:1}
-.sum-sub{flex:1;color:var(--muted);font-size:.85rem}
-.drop-wrap{margin-top:14px;overflow-x:auto;border-radius:16px;border:2px solid var(--line);background:var(--panel)}
+.drop-wrap{overflow-x:auto;border-radius:16px;border:2px solid var(--line);background:var(--panel)}
 .drops{border-collapse:collapse;width:100%;min-width:760px;font-size:.85rem;font-variant-numeric:tabular-nums}
 .drops th,.drops td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
 .drops thead th{background:var(--panel-2)}
@@ -228,7 +221,7 @@ a{color:var(--gold)}
 .log-block{display:grid;gap:4px}
 .block-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--line)}
 .block-head h3{font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.05em;line-height:1}
-.block-head span{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.block-head span{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .log{list-style:none;margin:0;padding:0}
 .log li{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;grid-template-areas:"time ex out" "time meta out";column-gap:12px;row-gap:4px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .log li.empty{display:block;color:var(--muted);font-size:.9rem;padding:14px 0;border:0}
@@ -239,7 +232,12 @@ a{color:var(--gold)}
 .l-meta .tb{font-size:.8rem}
 .l-out{grid-area:out;font-family:var(--display);font-size:1.1rem;letter-spacing:.06em;line-height:1;padding:5px 9px 3px;border-radius:8px;border:2px solid transparent}
 .l-out.ok{color:var(--ink);background:var(--gold)}
-.l-out.no{color:var(--muted);border-color:var(--line)}
+.l-out.no{border-color:var(--line)}
+.settings summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+.settings summary::-webkit-details-marker{display:none}
+.settings summary::after{content:"+";font-family:var(--display);font-size:1.6rem;line-height:1;color:var(--gold)}
+.settings[open] summary::after{content:"\2212"}
+.sum-title{font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.05em;line-height:1}
 .set-body{display:grid;gap:24px;padding-top:16px}
 fieldset{border:0;margin:0;padding:0;min-width:0}
 fieldset:disabled{opacity:.55}
@@ -255,19 +253,20 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
 .exo{display:flex;align-items:center;gap:8px;min-width:0;font-size:.88rem;cursor:pointer}
 .exo input{flex:none;width:17px;height:17px;accent-color:var(--gold)}
 .note{margin-top:10px;font-size:.82rem;color:var(--muted)}
-.bottom{display:grid;gap:8px;text-align:center}
 
 /* effects */
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55}
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;max-width:calc(100% - 32px);background:var(--gold);color:var(--ink);font-family:var(--display);font-size:1.5rem;letter-spacing:.06em;line-height:1;padding:12px 20px 9px;border-radius:14px;box-shadow:0 6px 0 var(--gold-deep),0 10px 30px rgba(0,0,0,.5);text-align:center}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:90;max-width:calc(100% - 32px);background:var(--gold);color:var(--ink);font-family:var(--display);font-size:1.5rem;letter-spacing:.05em;line-height:1.1;padding:12px 20px 9px;border-radius:14px;box-shadow:0 6px 0 var(--gold-deep),0 10px 30px rgba(0,0,0,.5);text-align:center}
 @keyframes pop{0%{transform:scale(.92);opacity:.4}60%{transform:scale(1.015)}100%{transform:none;opacity:1}}
 @keyframes rays{to{transform:translate(-50%,-50%) rotate(1turn)}}
+@keyframes burst{to{transform:translate(-50%,-50%) rotate(1turn)}}
 @keyframes shine{0%{left:-40%}60%,100%{left:120%}}
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-7px,3px) rotate(-.5deg)}40%{transform:translate(6px,-4px) rotate(.5deg)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-2px)}}
+@keyframes boxshake{0%,100%{transform:none}10%{transform:rotate(-4deg)}20%{transform:rotate(4deg)}30%{transform:rotate(-6deg) translateY(-2px)}40%{transform:rotate(6deg)}50%{transform:rotate(-8deg) translateY(-5px)}60%{transform:rotate(8deg)}70%{transform:rotate(-5deg)}80%{transform:rotate(5deg) translateY(-8px)}90%{transform:rotate(-2deg)}}
 .shake{animation:shake .55s ease-in-out}
 @media (prefers-reduced-motion:reduce){
-  .loot,.shake,.loot::before,.loot-banner::after{animation:none!important}
-  .wheel-card,.btn,.xp-bar span{transition:none}
+  .loot,.shake,.loot::before,.loot-banner::after,.ov-stage .pbox,.ov-stage .ov-burst{animation:none!important}
+  .wheel-card,.btn,.xp-bar span,.pbox,.pbox-lid,.ov-card,.ov-burst{transition:none}
 }
 </style>
 
@@ -275,13 +274,13 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
   <header class="top">
     <div class="brand">
       <h1 class="logo">Pandora's <span>Box</span></h1>
-      <p class="tag">Το finisher της προπόνησης. Γύρνα τους τροχούς, πάρε το drop και κάν' το.</p>
+      <p class="tag">Νόμιζες ότι τελείωσες την προπόνηση; 😈</p>
     </div>
     <div class="player" aria-label="Πρόοδος">
       <div class="lvl"><span class="lvl-label">LVL</span><span class="lvl-num" id="lvl">1</span></div>
       <div class="xp">
         <div class="xp-bar"><span id="xp-fill"></span></div>
-        <div class="xp-text"><span id="xp-text">0 / 100 XP</span><span id="xp-today">Σήμερα +0 XP</span></div>
+        <div class="xp-text" id="xp-text">0 / 100 XP</div>
       </div>
       <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Ήχος"></button>
     </div>
@@ -292,38 +291,30 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
       <section class="card wheel-card" id="w1" aria-labelledby="w1-title">
         <div class="card-head">
           <h2 id="w1-title"><b>1</b> · Exercise</h2>
-          <p>Τι θα κάνεις</p>
+          <p>τι θα πάθεις</p>
         </div>
         <div class="wheel">
           <svg class="pointer" viewBox="0 0 34 40" aria-hidden="true"><path d="M3 3h28L17 37z" style="fill:var(--gold);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/></svg>
           <canvas id="c1" role="img" aria-label="Τροχός ασκήσεων"></canvas>
         </div>
         <button class="btn spin" id="spin1" type="button">SPIN</button>
-        <div class="chips" id="groups"></div>
-        <p class="hint" id="hint1"></p>
       </section>
 
       <section class="card wheel-card" id="w2" aria-labelledby="w2-title">
         <div class="card-head">
           <h2 id="w2-title"><b>2</b> · Rarity</h2>
-          <p>Πόσο θα πονέσει</p>
+          <p>πόσο θα κλάψεις</p>
         </div>
         <div class="wheel">
           <svg class="pointer" viewBox="0 0 34 40" aria-hidden="true"><path d="M3 3h28L17 37z" style="fill:var(--gold);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/></svg>
           <canvas id="c2" role="img" aria-label="Τροχός rarity"></canvas>
         </div>
         <button class="btn spin" id="spin2" type="button" disabled>SPIN</button>
-        <ul class="rarity" id="rarity"></ul>
       </section>
     </div>
 
     <section class="verdict" id="verdict" aria-live="polite"></section>
   </main>
-
-  <details class="drops-block" id="drops-block">
-    <summary><span class="sum-title">Drop table</span><span class="sum-sub">Όλες οι ασκήσεις και τα εύρη ανά rarity</span></summary>
-    <div class="drop-wrap" id="drop-wrap"></div>
-  </details>
 
   <section class="foot">
     <div class="log-block">
@@ -345,6 +336,10 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
           <div class="exlist" id="exlist"></div>
           <p class="note" id="ex-note">Βγάλε ό,τι δεν έχει το γυμναστήριό σου.</p>
         </fieldset>
+        <fieldset>
+          <legend>Drop table · βάση ανά rarity</legend>
+          <div class="drop-wrap" id="drop-wrap"></div>
+        </fieldset>
         <div>
           <button class="link" id="reset" type="button">Επαναφορά αρχικών ρυθμίσεων</button><br>
           <button class="link" id="xp-reset" type="button">Μηδένισε XP και level</button>
@@ -352,10 +347,33 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
       </div>
     </details>
   </section>
+</div>
 
-  <footer class="bottom">
-    <p class="note">Το XP, οι ρυθμίσεις και η σημερινή λίστα μένουν σε αυτή τη συσκευή.</p>
-  </footer>
+<div class="box-ov" id="box-ov" hidden>
+  <div class="ov-stage" id="ov-stage">
+    <div class="ov-burst" aria-hidden="true"></div>
+    <svg class="pbox" viewBox="0 0 240 200" aria-hidden="true">
+      <g class="pbox-body">
+        <rect x="30" y="92" width="180" height="96" rx="10" class="b-fill"/>
+        <rect x="31" y="93" width="178" height="14" class="b-trim"/>
+        <rect x="108" y="93" width="24" height="94" class="b-trim"/>
+        <rect x="31" y="174" width="178" height="13" rx="5" class="b-trim"/>
+        <circle cx="120" cy="134" r="12" class="b-lock"/>
+        <rect x="117" y="132" width="6" height="15" rx="2" class="b-key"/>
+      </g>
+      <g class="pbox-lid">
+        <path d="M24 92 L216 92 L206 54 Q120 30 34 54 Z" class="b-fill"/>
+        <path d="M24 92 L216 92 L214 81 L26 81 Z" class="b-trim"/>
+        <rect x="108" y="39" width="24" height="53" class="b-trim"/>
+      </g>
+    </svg>
+    <div class="ov-card" role="dialog" aria-modal="true" aria-labelledby="ov-name">
+      <p class="kicker">Έπεσε</p>
+      <h2 class="ex-name" id="ov-name"></h2>
+      <div id="ov-meme"></div>
+      <button class="btn" id="ov-go" type="button">ΠΑΜΕ 😬</button>
+    </div>
+  </div>
 </div>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -378,57 +396,46 @@ const GROUPS = {
   cardio:   { name: 'CARDIO',   color: '--g-cardio' }
 };
 
+// rest = δευτερόλεπτα ανάσας ανάμεσα στα σετ
 const TIERS = [
-  { name: 'COMMON',    p: 35, xp: 10,  stars: 1, rule: 'Σπάσ’ το σε όσα κομμάτια θες.' },
-  { name: 'UNCOMMON',  p: 28, xp: 20,  stars: 2, rule: 'Το πολύ σε 3 κομμάτια.' },
-  { name: 'RARE',      p: 20, xp: 40,  stars: 3, rule: 'Το πολύ σε 2 κομμάτια, με 20″ ανάσα ανάμεσα.' },
-  { name: 'EPIC',      p: 12, xp: 80,  stars: 4, rule: 'Μονοκόμματο. Αν σπάσει, 10″ ανάσα και συνεχίζεις μέχρι να βγει όλο.' },
-  { name: 'LEGENDARY', p: 5,  xp: 150, stars: 5, rule: 'Όπως το Epic. Μετά το κουτί ανοίγει και βγάζει δεύτερη άσκηση σε Rare.' }
+  { name: 'COMMON',    p: 35, xp: 10,  stars: 1, rest: 60, taunt: 'ΤΥΧΕΡΑΚΙΑ' },
+  { name: 'UNCOMMON',  p: 28, xp: 20,  stars: 2, rest: 45, taunt: 'ΖΕΣΤΑΜΑ' },
+  { name: 'RARE',      p: 20, xp: 40,  stars: 3, rest: 30, taunt: 'ΑΡΧΙΖΕΙ ΤΟ ΠΑΡΤΙ' },
+  { name: 'EPIC',      p: 12, xp: 80,  stars: 4, rest: 20, taunt: 'RIP' },
+  { name: 'LEGENDARY', p: 5,  xp: 150, stars: 5, rest: 15, taunt: 'ΚΑΛΗ ΤΥΧΗ ΣΤΗΝ ΑΛΛΗ ΖΩΗ' }
 ];
 const DEFAULT_ODDS = TIERS.map(t => t.p);
 const BONUS_TIER = 2;
-const BONUS_NOTE = 'Μετά το κουτί ανοίγει και βγάζει δεύτερη άσκηση σε Rare.';
+// πόσο από τη βάση της rarity κάνεις σε κάθε σετ, ανάλογα με το πόσα σετ βγήκαν
+const SET_SHARE = [0, 1, 0.7, 0.55, 0.47, 0.42];
+const RULE = 'Σετ που σπάει: 10″ ανάσα και το τελειώνεις.';
+const BONUS_NOTE = 'Και μετά έχει κι άλλο. 😈';
+const SKIP_TXT = 'Δεν έχω εξοπλισμό (ναι, καλά)';
+const HYPE = ['Ok, δεν είσαι εντελώς άχρηστος.', 'Light weight baby!', 'Stay hard.', 'Θες και χειροκρότημα;', 'Καλό. Και τώρα ξανά.'];
+const ROAST = ['Skill issue.', 'Η γιαγιά μου το έβγαλε με τη μία.', 'Το κουτί γελάει.', '0 XP. Κλάψε.', 'bok bok 🐔'];
+const IDLE = ['Τι φοβάσαι;', 'Το κουτί πεινάει.', 'Ένα spin. Τι μπορεί να πάει στραβά;', 'Μην κοιτάς το Legendary. Σε κοιτάει αυτό.', 'Οι πήχεις σου σε αποχαιρετούν.'];
 
-// r = εύρος ανά rarity (επαναλήψεις, δευτερόλεπτα ή λεπτά), kg = βάρος ανά rarity
+// r = βάση ανά rarity (επαναλήψεις, δευτερόλεπτα ή λεπτά), kg = βάρος ανά rarity
 const EX = [
-  { id:'plank', name:'Plank', short:'Plank', group:'core', unit:'sec', r:[[120,150],[90,120],[80,100],[70,85],[90,105]], kg:[0,10,15,20,20], kgNote:'στην πλάτη',
-    how:'Στους πήχεις, σώμα ευθεία από φτέρνες ως κεφάλι, σφιγμένοι γλουτοί. Ο δίσκος πάει στην πάνω πλάτη, όχι στη μέση.' },
-  { id:'sideplank', name:'Side Plank', short:'Side Plank', group:'core', unit:'sec', perSide:true, r:[[60,75],[75,90],[90,105],[105,120],[120,150]],
-    how:'Στον πήχη, αγκώνας κάτω από τον ώμο, γοφός ψηλά. Ο χρόνος μετράει για κάθε πλευρά.' },
-  { id:'hollow', name:'Hollow Hold', short:'Hollow Hold', group:'core', unit:'sec', r:[[45,60],[60,75],[75,90],[90,110],[110,140]],
-    how:'Ανάσκελα, μέση κολλημένη στο πάτωμα, χέρια και πόδια τεντωμένα λίγο πάνω από το έδαφος. Αν σηκωθεί η μέση, λύγισε λίγο τα γόνατα.' },
-  { id:'deadbug', name:'Dead Bug', short:'Dead Bug', group:'core', unit:'reps', r:[[30,36],[36,44],[44,52],[52,62],[62,80]],
-    how:'Ανάσκελα, χέρια και γόνατα ψηλά. Κατεβάζεις αργά αντίθετο χέρι και πόδι, η μέση μένει κολλημένη κάτω. Κάθε πλευρά μετράει μία επανάληψη.' },
-  { id:'legraise', name:'Lying Leg Raises', short:'Leg Raises', group:'core', unit:'reps', r:[[20,25],[25,30],[30,38],[38,46],[46,60]],
-    how:'Ανάσκελα, χέρια κάτω από τους γλουτούς, πόδια τεντωμένα. Κατεβαίνεις αργά και δεν ακουμπάς κάτω μέχρι το τέλος.' },
-  { id:'climbers', name:'Mountain Climbers', short:'Climbers', group:'core', unit:'sec', r:[[60,75],[75,90],[90,105],[105,120],[120,150]],
-    how:'Θέση push-up, γόνατα στο στήθος εναλλάξ και γρήγορα. Η λεκάνη μένει χαμηλά.' },
-  { id:'bicycle', name:'Bicycle Crunches', short:'Bicycles', group:'core', unit:'reps', r:[[50,60],[60,76],[76,90],[90,110],[110,140]],
-    how:'Αγκώνας προς το αντίθετο γόνατο, το άλλο πόδι τεντώνει. Αργά και ελεγχόμενα. Κάθε πλευρά μετράει μία επανάληψη.' },
-  { id:'hang', name:'Dead Hang', short:'Dead Hang', group:'forearms', unit:'sec', r:[[40,50],[50,60],[60,75],[75,90],[90,120]],
-    how:'Κρέμεσαι από το μονόζυγο με τεντωμένα χέρια και ενεργούς ώμους, όχι κολλημένους στα αυτιά. Πόδια ελεύθερα.' },
-  { id:'farmer', name:"Farmer's Hold", short:"Farmer's Hold", group:'forearms', unit:'sec', r:[[60,75],[75,90],[60,75],[60,75],[90,120]], kg:[20,20,25,30,30], kgNote:'ανά χέρι',
-    how:'Ένας αλτήρας σε κάθε χέρι, όρθιος, ώμοι κάτω και πίσω. Μένεις ακίνητος στη θέση σου.' },
-  { id:'pinch', name:'Plate Pinch', short:'Plate Pinch', group:'forearms', unit:'sec', r:[[40,50],[50,65],[65,80],[25,35],[35,50]], kg:['2×5','2×5','2×5','2×10','2×10'], kgNote:'ανά χέρι',
-    how:'Δύο δίσκοι κολλητά, λεία πλευρά προς τα έξω. Τους κρατάς μόνο με τα δάχτυλα (pinch), μακριά από το σώμα.' },
-  { id:'wristcurl', name:'Wrist Curls', short:'Wrist Curls', group:'forearms', unit:'reps', r:[[30,40],[40,50],[35,45],[45,60],[60,80]], kg:[8,8,10,10,12], kgNote:'ανά χέρι',
-    how:'Πήχεις πάνω στους μηρούς ή στον πάγκο, παλάμες προς τα πάνω. Κινείται μόνο ο καρπός, σε όλη τη διαδρομή.' },
-  { id:'revwrist', name:'Reverse Wrist Curls', short:'Rev. Wrist Curls', group:'forearms', unit:'reps', r:[[25,30],[30,40],[30,40],[40,50],[50,60]], kg:[5,5,6,8,8], kgNote:'ανά χέρι',
-    how:'Ίδια θέση με τα wrist curls, αλλά με τις παλάμες προς τα κάτω. Ελαφρύ βάρος και αργά.' },
-  { id:'curl', name:'Dumbbell Curls', short:'Curls', group:'biceps', unit:'reps', r:[[20,25],[25,30],[20,25],[25,30],[25,35]], kg:[8,10,10,12,12], kgNote:'ανά χέρι',
-    how:'Όρθιος, αγκώνες κολλημένοι στα πλευρά, χωρίς κούνημα του κορμού. Κατεβαίνεις μέχρι κάτω κάθε φορά.' },
-  { id:'hammer', name:'Hammer Curls', short:'Hammer Curls', group:'biceps', unit:'reps', r:[[20,25],[25,30],[20,25],[25,30],[30,40]], kg:[10,10,12,12,12], kgNote:'ανά χέρι',
-    how:'Παλάμες η μία απέναντι στην άλλη, σαν να κρατάς σφυρί. Δουλεύει δικέφαλο και πήχη μαζί.' },
-  { id:'isocurl', name:'Isometric Curl Hold (90°)', short:'Iso Curl Hold', group:'biceps', unit:'sec', r:[[45,60],[60,75],[50,65],[65,80],[75,90]], kg:[8,10,10,12,12], kgNote:'ανά χέρι',
-    how:'Ανεβάζεις τους αλτήρες μέχρι ο αγκώνας να κάνει 90° και μένεις ακίνητος. Αγκώνες κολλημένοι στα πλευρά.' },
-  { id:'pushup', name:'Push-ups', short:'Push-ups', group:'push', unit:'reps', r:[[25,30],[30,40],[40,50],[50,60],[60,75]],
-    how:'Παλάμες λίγο πιο ανοιχτά από τους ώμους, σώμα ευθεία, στήθος ως το πάτωμα σε κάθε επανάληψη.' },
-  { id:'wpushup', name:'Weighted Push-ups', short:'Weighted Push-ups', group:'push', unit:'reps', r:[[15,20],[15,20],[18,22],[15,20],[15,20]], kg:[5,10,10,15,20], kgNote:'στην πλάτη',
-    how:'Δίσκος στην πάνω πλάτη ή γιλέκο βάρους. Χωρίς βοήθεια, βάλε τον δίσκο από γονατιστός και μετά ανέβα σε θέση push-up.' },
-  { id:'pushhold', name:'Push-up Hold', short:'Push-up Hold', group:'push', unit:'sec', r:[[20,30],[30,40],[40,50],[50,65],[65,80]],
-    how:'Κατεβαίνεις στη μέση του push-up, με τους αγκώνες στις 90°, και μένεις ακίνητος. Σώμα ευθεία.' },
-  { id:'treadmill', name:'Treadmill', short:'Treadmill', group:'cardio', unit:'min', r:[[15,20],[20,25],[25,32],[32,38],[38,45]],
-    rule:'Συνεχόμενα, χωρίς να κατέβεις από τον διάδρομο.', how:'Ταχύτητα και κλίση τις διαλέγεις εσύ. Μετράει μόνο ο χρόνος.' }
+  { id:'plank',     name:'Plank',                     short:'Plank',            group:'core',     unit:'sec',  r:[[120,150],[90,120],[80,100],[70,85],[90,105]], kg:[0,10,15,20,20], kgNote:'στην πλάτη' },
+  { id:'sideplank', name:'Side Plank',                short:'Side Plank',       group:'core',     unit:'sec',  r:[[60,75],[75,90],[90,105],[105,120],[120,150]], perSide:true },
+  { id:'hollow',    name:'Hollow Hold',               short:'Hollow Hold',      group:'core',     unit:'sec',  r:[[45,60],[60,75],[75,90],[90,110],[110,140]] },
+  { id:'deadbug',   name:'Dead Bug',                  short:'Dead Bug',         group:'core',     unit:'reps', r:[[30,36],[36,44],[44,52],[52,62],[62,80]] },
+  { id:'legraise',  name:'Lying Leg Raises',          short:'Leg Raises',       group:'core',     unit:'reps', r:[[20,25],[25,30],[30,38],[38,46],[46,60]] },
+  { id:'climbers',  name:'Mountain Climbers',         short:'Climbers',         group:'core',     unit:'sec',  r:[[60,75],[75,90],[90,105],[105,120],[120,150]] },
+  { id:'bicycle',   name:'Bicycle Crunches',          short:'Bicycles',         group:'core',     unit:'reps', r:[[50,60],[60,76],[76,90],[90,110],[110,140]] },
+  { id:'hang',      name:'Dead Hang',                 short:'Dead Hang',        group:'forearms', unit:'sec',  r:[[40,50],[50,60],[60,75],[75,90],[90,120]] },
+  { id:'farmer',    name:"Farmer's Hold",             short:"Farmer's Hold",    group:'forearms', unit:'sec',  r:[[60,75],[75,90],[60,75],[60,75],[90,120]], kg:[20,20,25,30,30], kgNote:'ανά χέρι' },
+  { id:'pinch',     name:'Plate Pinch',               short:'Plate Pinch',      group:'forearms', unit:'sec',  r:[[40,50],[50,65],[65,80],[25,35],[35,50]], kg:['2×5','2×5','2×5','2×10','2×10'], kgNote:'ανά χέρι' },
+  { id:'wristcurl', name:'Wrist Curls',               short:'Wrist Curls',      group:'forearms', unit:'reps', r:[[30,40],[40,50],[35,45],[45,60],[60,80]], kg:[8,8,10,10,12], kgNote:'ανά χέρι' },
+  { id:'revwrist',  name:'Reverse Wrist Curls',       short:'Rev. Wrist Curls', group:'forearms', unit:'reps', r:[[25,30],[30,40],[30,40],[40,50],[50,60]], kg:[5,5,6,8,8], kgNote:'ανά χέρι' },
+  { id:'curl',      name:'Dumbbell Curls',            short:'Curls',            group:'biceps',   unit:'reps', r:[[20,25],[25,30],[20,25],[25,30],[25,35]], kg:[8,10,10,12,12], kgNote:'ανά χέρι' },
+  { id:'hammer',    name:'Hammer Curls',              short:'Hammer Curls',     group:'biceps',   unit:'reps', r:[[20,25],[25,30],[20,25],[25,30],[30,40]], kg:[10,10,12,12,12], kgNote:'ανά χέρι' },
+  { id:'isocurl',   name:'Isometric Curl Hold (90°)', short:'Iso Curl Hold',    group:'biceps',   unit:'sec',  r:[[45,60],[60,75],[50,65],[65,80],[75,90]], kg:[8,10,10,12,12], kgNote:'ανά χέρι' },
+  { id:'pushup',    name:'Push-ups',                  short:'Push-ups',         group:'push',     unit:'reps', r:[[25,30],[30,40],[40,50],[50,60],[60,75]] },
+  { id:'wpushup',   name:'Weighted Push-ups',         short:'Weighted Push-ups',group:'push',     unit:'reps', r:[[15,20],[15,20],[18,22],[15,20],[15,20]], kg:[5,10,10,15,20], kgNote:'στην πλάτη' },
+  { id:'pushhold',  name:'Push-up Hold',              short:'Push-up Hold',     group:'push',     unit:'sec',  r:[[20,30],[30,40],[40,50],[50,65],[65,80]] },
+  { id:'treadmill', name:'Treadmill',                 short:'Treadmill',        group:'cardio',   unit:'min',  r:[[15,20],[20,25],[25,32],[32,38],[38,45]], rule:'Συνεχόμενα, χωρίς να κατέβεις από τον διάδρομο.' }
 ];
 
 // x,y,w,h σε % της εικόνας. s: impact (λευκά με περίγραμμα), ink (μαύρα), sub (λευκός υπότιτλος)
@@ -485,6 +492,7 @@ function rand(){
   try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296; }
   catch (e) { return Math.random(); }
 }
+function pickOne(list){ return list[Math.floor(rand() * list.length)]; }
 function pickWeighted(ws){
   const total = ws.reduce((a, b) => a + b, 0);
   let r = rand() * total;
@@ -521,14 +529,8 @@ const oddsSum = () => odds.reduce((a, b) => a + b, 0);
 
 // ---------- μορφοποίηση ----------
 const clock = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-function pctText(x){ const v = Math.round(x * 1000) / 10; return (Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',')) + '%'; }
-function fmtV(ex, v){ return ex.unit === 'reps' ? v + ' επ.' : ex.unit === 'min' ? v + '′' : (v < 60 ? v + '″' : clock(v)); }
-function bigV(ex, v){
-  const side = ex.perSide ? ' ανά πλευρά' : '';
-  if (ex.unit === 'reps') return { num: String(v), unit: 'επαναλήψεις' };
-  if (ex.unit === 'min') return { num: String(v), unit: 'λεπτά' };
-  return v < 60 ? { num: String(v), unit: 'δευτερόλεπτα' + side } : { num: clock(v), unit: 'λεπτά' + side };
-}
+function fmtPer(ex, v){ return ex.unit === 'reps' ? String(v) : ex.unit === 'min' ? v + '′' : (v < 60 ? v + '″' : clock(v)); }
+const comboTxt = (ex, c) => (c.sets > 1 ? c.sets + 'x' : '') + fmtPer(ex, c.per);
 function rangeTxt(ex, t){
   const [lo, hi] = ex.r[t];
   if (ex.unit === 'reps') return lo + '–' + hi;
@@ -537,13 +539,20 @@ function rangeTxt(ex, t){
 }
 function kgShort(ex, t){ if (!ex.kg) return ''; const k = ex.kg[t]; return k === 0 ? 'χωρίς βάρος' : k + ' kg'; }
 function kgTxt(ex, t){ if (!ex.kg) return ''; const k = ex.kg[t]; return k === 0 ? 'χωρίς βάρος' : k + ' kg' + (ex.kgNote ? ' ' + ex.kgNote : ''); }
-function ruleText(ex, t, isBonus){ return ex.rule ? ex.rule + (t === 4 && !isBonus ? ' ' + BONUS_NOTE : '') : TIERS[t].rule; }
-const secondsOf = (ex, v) => ex.unit === 'min' ? v * 60 : v;
-function roll(ex, t){
-  const [lo, hi] = ex.r[t], step = ex.unit === 'sec' ? 5 : 1;
-  const n = Math.floor((hi - lo) / step) + 1;
-  return { v: lo + step * Math.floor(rand() * n), lo, hi };
+function ruleText(ex, t, isBonus){ return (ex.rule || RULE) + (t === 4 && !isBonus ? ' ' + BONUS_NOTE : ''); }
+function pctText(x){ const v = Math.round(x * 1000) / 10; return (Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',')) + '%'; }
+
+// συνδυασμοί σετ για τον τρίτο τροχό: από 1 σετ (όλη η βάση) έως 5 μικρότερα
+function setCombos(ex, t){
+  const [lo, hi] = ex.r[t], step = ex.unit === 'sec' ? 5 : 1, out = [], seen = {};
+  const snap = x => Math.max(step, Math.round(x / step) * step);
+  [[1, hi], [2, lo], [2, hi], [3, lo], [3, hi], [4, lo], [4, hi], [5, lo], [5, hi]].forEach(([sets, base]) => {
+    const per = snap(base * SET_SHARE[sets]), key = sets + 'x' + per;
+    if (!seen[key]){ seen[key] = 1; out.push({ sets, per }); }
+  });
+  return out;
 }
+function rollMinutes(ex, t){ const [lo, hi] = ex.r[t]; return lo + Math.floor(rand() * (hi - lo + 1)); }
 
 // ---------- ήχος ----------
 let AC = null, lastTick = 0;
@@ -569,6 +578,7 @@ function tick(){ const n = performance.now(); if (n - lastTick < 45) return; las
 const beep = (f, d) => tone(f, d, 'sine', 0.22);
 const pop = () => { tone(330, 0.12, 'triangle', 0.25); tone(660, 0.14, 'triangle', 0.18, 0.06); };
 const coin = () => { tone(988, 0.08, 'square', 0.07); tone(1319, 0.22, 'square', 0.07, 0.08); };
+const sadTrombone = () => [392, 370, 349, 330].forEach((f, i) => tone(f, i === 3 ? 0.6 : 0.25, 'sawtooth', 0.05, i * 0.26));
 function fanfare(t){
   const scale = [523, 659, 784, 1047, 1319];
   for (let i = 0; i <= t; i++) tone(scale[i], 0.22 + (i === t ? 0.3 : 0), 'square', 0.06, i * 0.09);
@@ -612,13 +622,13 @@ function shake(){
 let toastTimer = 0;
 function toast(msg){
   const el = $('toast'); el.textContent = msg; el.hidden = false;
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 2200);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 2400);
 }
 
 // ---------- τροχός ----------
 const C = {};
 const rootStyle = getComputedStyle(document.documentElement);
-['bg','fg','ink','gold','gold-deep','line','panel-2','r0','r1','r2','r3','r4','g-core','g-forearms','g-biceps','g-push','g-cardio']
+['bg','fg','ink','gold','gold-deep','r0','r1','r2','r3','r4','g-core','g-forearms','g-biceps','g-push','g-cardio']
   .forEach(k => { C[k] = rootStyle.getPropertyValue('--' + k).trim(); });
 
 class Wheel {
@@ -740,83 +750,102 @@ function exSegments(){
 function tierSegments(){
   return TIERS.map((t, i) => ({ key: 't' + i, w: odds[i], label: t.name, fill: C['r' + i], text: C.ink }));
 }
-// τρίτος τροχός: κάθε νούμερο του εύρους της rarity, με ίδια πιθανότητα
-function repSegments(ex, t){
-  const [lo, hi] = ex.r[t], segs = [];
-  for (let v = lo; v <= hi; v++) segs.push({ key: 'v' + v, value: v, w: 1, label: String(v), fill: C['r' + t], overlay: (v - lo) % 2 ? 'rgba(255,255,255,0.25)' : null, text: C.ink });
-  return segs;
+function comboSegments(ex, t){
+  return setCombos(ex, t).map((combo, i) => ({ key: 'c' + i, combo, w: 1, label: comboTxt(ex, combo), fill: C['r' + t],
+    overlay: i % 2 ? 'rgba(255,255,255,0.25)' : null, text: C.ink }));
 }
 
-// ---------- χρονόμετρο ----------
-const T = { iv: 0, total: 0, left: 0, prep: 0, prepLabel: '', running: false, started: false, done: false, round: 1, rounds: 1, last: 0 };
+// ---------- σετ, ανάσες & χρονόμετρο ----------
+// Κάθε βήμα: work (με χρόνο ή επαναλήψεις), switch (αλλαγή πλευράς) ή rest (ανάσα ανάμεσα στα σετ)
+const W = { ex: null, combo: null, rest: 0, steps: [], i: 0, left: 0, prep: 0, iv: 0, last: 0, running: false, started: false, done: false };
 let wake = null;
 function requestWake(){ try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(w => { wake = w; }).catch(() => {}); } catch (e) {} }
 function releaseWake(){ try { if (wake) wake.release().catch(() => {}); } catch (e) {} wake = null; }
-function timerStop(){ if (T.iv) clearInterval(T.iv); T.iv = 0; T.running = false; releaseWake(); }
-function timerMount(sec, rounds){
-  timerStop();
-  Object.assign(T, { total: sec, left: sec, prep: 0, prepLabel: '', started: false, done: false, round: 1, rounds });
-  paintTimer();
+function wkPause(){ if (W.iv) clearInterval(W.iv); W.iv = 0; W.running = false; releaseWake(); }
+function wkRun(){ if (W.iv) return; W.running = true; W.last = performance.now(); W.iv = setInterval(wkTick, 100); requestWake(); }
+function wkMount(ex, combo, rest){
+  wkPause();
+  const timed = ex.unit !== 'reps', per = ex.unit === 'min' ? combo.per * 60 : combo.per, sides = ex.perSide ? 2 : 1, steps = [];
+  for (let s = 1; s <= combo.sets; s++){
+    for (let side = 1; side <= sides; side++){
+      steps.push({ kind: 'work', set: s, side, dur: timed ? per : 0 });
+      if (side < sides) steps.push({ kind: 'switch', set: s, dur: 5 });
+    }
+    if (s < combo.sets) steps.push({ kind: 'rest', set: s, dur: rest });
+  }
+  Object.assign(W, { ex, combo, rest, steps, i: 0, left: steps[0].dur, prep: 0, started: !timed, done: false });
+  wkPaint();
 }
-function timerToggle(){
+function wkMain(){
   initAudio();
-  if (T.done) return;
-  if (T.running){ timerStop(); paintTimer(); return; }
-  if (!T.started){ T.started = true; T.prep = 3; T.prepLabel = 'Get ready'; beep(660, 0.1); }
-  T.running = true;
-  T.last = performance.now();
-  T.iv = setInterval(timerStep, 100);
-  requestWake();
-  paintTimer();
+  if (W.done || !W.steps.length) return;
+  const st = W.steps[W.i];
+  if (!W.started){ W.started = true; W.prep = 3; beep(660, 0.1); wkRun(); wkPaint(); return; }
+  if (st.kind !== 'work' || !st.dur){ wkNext(); return; }   // σετ επαναλήψεων έγινε, ή skip της ανάσας
+  if (W.running) wkPause(); else wkRun();
+  wkPaint();
 }
-function timerStep(){
-  const now = performance.now(), dt = (now - T.last) / 1000;
-  T.last = now;
-  if (T.prep > 0){
-    const b = Math.ceil(T.prep);
-    T.prep = Math.max(0, T.prep - dt);
-    const a = Math.ceil(T.prep);
+function wkNext(){
+  W.i++;
+  if (W.i >= W.steps.length){ W.done = true; W.left = 0; wkPause(); fanfare(2); wkPaint(); return; }
+  const st = W.steps[W.i];
+  W.left = st.dur; W.prep = 0;
+  if (st.kind === 'work'){ beep(990, 0.25); if (st.dur) wkRun(); else wkPause(); }
+  else { beep(440, 0.2); wkRun(); }
+  wkPaint();
+}
+function wkTick(){
+  const now = performance.now(), dt = (now - W.last) / 1000;
+  W.last = now;
+  if (W.prep > 0){
+    const b = Math.ceil(W.prep);
+    W.prep = Math.max(0, W.prep - dt);
+    const a = Math.ceil(W.prep);
     if (a < b) beep(a > 0 ? 660 : 990, a > 0 ? 0.1 : 0.25);
-    paintTimer();
+    wkPaint();
     return;
   }
-  const b = Math.ceil(T.left);
-  T.left -= dt;
-  const a = Math.max(0, Math.ceil(T.left));
+  const st = W.steps[W.i];
+  if (!st || !st.dur) return;
+  const b = Math.ceil(W.left);
+  W.left -= dt;
+  const a = Math.max(0, Math.ceil(W.left));
   if (a < b && a > 0 && a <= 3) beep(660, 0.08);
-  if (T.left <= 0){
-    T.left = 0;
-    if (T.round < T.rounds){
-      T.round++; T.left = T.total; T.prep = 5; T.prepLabel = 'Άλλαξε πλευρά'; beep(990, 0.3);
-    } else {
-      T.done = true; timerStop(); beep(990, 0.35); setTimeout(() => beep(1320, 0.5), 380);
-    }
-  }
-  paintTimer();
+  if (W.left <= 0){ wkNext(); return; }
+  wkPaint();
 }
-function paintTimer(){
-  const face = $('t-face');
-  if (!face) return;
-  if (T.prep > 0){ face.textContent = String(Math.ceil(T.prep)); $('t-label').textContent = T.prepLabel; }
+function wkPaint(){
+  const face = $('wk-face');
+  if (!face || !W.steps.length) return;
+  const sets = W.combo.sets, st = W.steps[Math.min(W.i, W.steps.length - 1)];
+  const doneSets = W.done ? sets : st.kind === 'rest' ? st.set : st.set - 1;
+  let label, txt, bar;
+  if (W.done){ label = 'ΤΕΛΟΣ'; txt = '✓'; bar = 1; }
+  else if (W.prep > 0){ label = 'ΕΤΟΙΜΟΣ;'; txt = String(Math.ceil(W.prep)); bar = 0; }
+  else if (st.kind === 'rest'){ label = 'ΑΝΑΣΑ'; txt = clock(Math.ceil(W.left)); bar = 1 - W.left / st.dur; }
+  else if (st.kind === 'switch'){ label = 'ΑΛΛΑΞΕ ΠΛΕΥΡΑ'; txt = clock(Math.ceil(W.left)); bar = 1 - W.left / st.dur; }
   else {
-    face.textContent = clock(Math.max(0, Math.ceil(T.left)));
-    $('t-label').textContent = T.done ? 'Done' : T.running ? 'Go' : T.started ? 'Paused' : 'Timer';
+    label = (sets > 1 ? `ΣΕΤ ${st.set}/${sets}` : 'GO') + (W.ex.perSide ? ` · ΠΛΕΥΡΑ ${st.side}` : '');
+    if (st.dur){ txt = clock(Math.ceil(W.left)); bar = 1 - W.left / st.dur; }
+    else { txt = W.combo.per + ' REPS'; bar = doneSets / sets; }
   }
-  face.classList.toggle('prep', T.prep > 0);
-  $('t-round').textContent = T.rounds > 1 ? (T.round === 1 ? 'Πρώτη πλευρά' : 'Δεύτερη πλευρά') : '';
-  $('t-bar').style.width = (T.total ? (1 - T.left / T.total) * 100 : 0) + '%';
-  const start = $('t-start');
-  start.textContent = T.done ? 'DONE' : T.running ? 'PAUSE' : T.started ? 'RESUME' : 'START';
-  start.disabled = T.done;
+  face.textContent = txt;
+  face.classList.toggle('prep', !W.done && (W.prep > 0 || st.kind !== 'work'));
+  $('wk-label').textContent = label;
+  $('wk-sub').textContent = sets > 1 ? '●'.repeat(doneSets) + '○'.repeat(sets - doneSets) : '';
+  $('wk-bar').style.width = Math.max(0, Math.min(1, bar)) * 100 + '%';
+  const main = $('wk-main');
+  main.textContent = W.done ? 'DONE ✓' : !W.started ? 'START' : st.kind !== 'work' ? 'SKIP' : !st.dur ? 'ΕΓΙΝΕ ✓' : W.running ? 'PAUSE' : 'RESUME';
+  main.disabled = W.done;
 }
-const timerHTML = () => `
+const wkHTML = () => `
   <div class="timer">
-    <div class="t-top"><span id="t-label">Timer</span><span id="t-round"></span></div>
-    <div class="t-face" id="t-face">0:00</div>
-    <div class="t-bar"><span id="t-bar"></span></div>
+    <div class="t-top"><span id="wk-label"></span><span class="dots" id="wk-sub"></span></div>
+    <div class="t-face" id="wk-face"></div>
+    <div class="t-bar"><span id="wk-bar"></span></div>
     <div class="t-btns">
-      <button class="btn" id="t-start" type="button" data-act="t-start">START</button>
-      <button class="btn btn-ghost" type="button" data-act="t-reset">RESET</button>
+      <button class="btn" id="wk-main" type="button" data-act="wk-main">START</button>
+      <button class="btn btn-ghost" type="button" data-act="wk-reset">RESET</button>
     </div>
   </div>`;
 
@@ -837,15 +866,14 @@ function memeHTML(id, small){
   </figure>`;
 }
 function fitBox(box){
-  const inner = box.firstElementChild, H = box.clientHeight, W = box.clientWidth;
-  if (!inner || !H || !W) return;
-  let fs = Math.min(H * 0.9, W * 0.16, 60);
+  const inner = box.firstElementChild, H = box.clientHeight, Wd = box.clientWidth;
+  if (!inner || !H || !Wd) return;
+  let fs = Math.min(H * 0.9, Wd * 0.16, 60);
   box.style.fontSize = fs + 'px';
-  for (let i = 0; i < 40 && fs > 6 && (inner.offsetHeight > H || inner.scrollWidth > W); i++){ fs *= 0.92; box.style.fontSize = fs + 'px'; }
+  for (let i = 0; i < 40 && fs > 6 && (inner.offsetHeight > H || inner.scrollWidth > Wd); i++){ fs *= 0.92; box.style.fontSize = fs + 'px'; }
 }
 const memeRO = 'ResizeObserver' in window ? new ResizeObserver(list => list.forEach(en => en.target.querySelectorAll('.mbox').forEach(fitBox))) : null;
 function fitMemes(root){
-  if (memeRO) memeRO.disconnect();
   root.querySelectorAll('.meme-frame').forEach(fr => { fr.querySelectorAll('.mbox').forEach(fitBox); if (memeRO) memeRO.observe(fr); });
 }
 function videoHTML(ex){
@@ -856,16 +884,17 @@ function videoHTML(ex){
     const src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&mute=1&loop=1&playlist=${v.id}&playsinline=1&rel=0&modestbranding=1`;
     return `<div class="video${v.short ? ' short' : ''}">
       <div class="video-frame"><iframe src="${src}" title="${esc(ex.name)}: πώς γίνεται" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
-      <a class="video-link" href="${url}" target="_blank" rel="noopener">Άνοιγμα στο YouTube · ${esc(v.channel || '')}</a>
+      <a class="video-link" href="${url}" target="_blank" rel="noopener">YouTube · ${esc(v.channel || '')}</a>
     </div>`;
   }
-  return `<a class="video-cta" href="${url}" target="_blank" rel="noopener"><span class="play" aria-hidden="true"></span><span><b>Δες πώς γίνεται</b><small>${esc(v.channel || 'YouTube')}${v.short ? ' · Short' : ''}</small></span></a>`;
+  return `<a class="video-cta" href="${url}" target="_blank" rel="noopener"><span class="play" aria-hidden="true"></span><b>Δες πώς γίνεται</b></a>`;
 }
 
 // ---------- κατάσταση & οθόνες ----------
-// phase: idle → spinEx → needTier → spinTier → result
+// phase: idle → spinEx → needTier → spinTier → needSets → spinSets → result (ο διάδρομος πάει κατευθείαν στο result)
 //        forced = η rarity είναι ήδη γνωστή (δεύτερο κακό του Legendary ή αλλαγή άσκησης)
-const state = { phase: 'idle', ex: null, tier: null, roll: null, isBonus: false, forced: null, forcedWhy: null, last: null, flash: '' };
+const state = { phase: 'idle', ex: null, tier: null, combo: null, isBonus: false, forced: null, forcedWhy: null,
+  last: null, flash: '', quip: '', idleLine: pickOne(IDLE) };
 
 const spin1 = $('spin1'), spin2 = $('spin2'), verdict = $('verdict');
 const w1Card = $('w1'), w2Card = $('w2');
@@ -873,90 +902,76 @@ const wheel1 = new Wheel($('c1'), spin1), wheel2 = new Wheel($('c2'), spin2);
 let wheel3 = null, ro = null;
 wheel1.rot = rand() * TAU;
 
-const groupChip = g => `<span class="chip" style="--c:var(${GROUPS[g].color})"><i></i>${GROUPS[g].name}</span>`;
 function lastLine(){
   const e = state.last;
   if (!e) return '';
-  return `<p class="last"><span class="tb" data-t="${e.t}">${TIERS[e.t].name}</span>${esc(exById(e.ex).name)}: ${e.ok ? 'cleared, +' + e.xp + ' XP' : 'λύγισες, 0 XP'}. Γράφτηκε στη λίστα.</p>`;
+  return `<p class="last"><span class="tb" data-t="${e.t}">${TIERS[e.t].name}</span>${esc(exById(e.ex).name)}: ${e.ok ? '+' + e.xp + ' XP.' : '0 XP.'} ${esc(state.quip)}</p>`;
 }
+const pointerSVG = '<svg class="pointer" viewBox="0 0 34 40" aria-hidden="true"><path d="M3 3h28L17 37z" style="fill:var(--gold);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/></svg>';
 
 const VIEW = {
   idle(){
-    const sum = oddsSum();
-    const top = state.last ? lastLine() : state.flash === 'swap' ? '<p class="last">Η άσκηση άλλαξε. Πάτα ξανά SPIN στον πρώτο τροχό.</p>' : '';
+    const top = state.last ? lastLine() : state.flash === 'swap' ? '<p class="last">Οκ, άλλη άσκηση. Γύρνα ξανά.</p>' : '';
     return `<div class="card panel">${top}
-      <p class="kicker">Drop rates</p>
-      <h2 class="title">Όσο πιο σπάνιο, τόσο πιο βαρύ.</h2>
-      <ol class="rates">${TIERS.map((t, i) => `
-        <li data-t="${i}"><span class="tb">${t.name}</span><span class="stars" aria-hidden="true">${'★'.repeat(t.stars)}</span><span class="meta">${pctText(odds[i] / sum)} · ${t.xp} XP</span><span class="r-text">${t.rule}</span></li>`).join('')}
-      </ol>
-      <p class="fine">Κάθε rarity έχει εύρος. Στις ασκήσεις με επαναλήψεις γυρνάς και τρίτο τροχό για το πόσες ακριβώς, ενώ στις ασκήσεις με χρόνο ο χρόνος βγαίνει τυχαία μέσα στο εύρος. «Κομμάτι» είναι κάθε συνεχόμενο σετ, και το νούμερο είναι το σύνολο που πρέπει να βγάλεις. Όλα τα εύρη είναι στο Drop table πιο κάτω.</p>
+      <h2 class="title">ΠΑΤΑ SPIN</h2>
+      <p class="taunt">${esc(state.idleLine)}</p>
     </div>`;
   },
   spinEx(){
     const f = state.forced;
     return `<div class="card panel"${f != null ? ` data-t="${f}"` : ''}>
-      <p class="kicker">${f != null ? 'Rarity κλειδωμένη: ' + TIERS[f].name : 'Rolling'}</p>
-      <h2 class="title">Ποια άσκηση θα πέσει;</h2>
+      <h2 class="title">🎰 Γυρίζει…</h2>
+      <p class="taunt">Προσευχήσου.</p>
     </div>`;
   },
   needTier(){
     const ex = state.ex, spinning = state.phase === 'spinTier', forced = state.forced != null;
-    const next = forced ? `Rarity κλειδωμένη: <span class="tb" data-t="${state.forced}">${TIERS[state.forced].name}</span>`
-      : spinning ? 'Ο δεύτερος τροχός γυρίζει…' : 'Πάτα SPIN στον δεύτερο τροχό. Αυτά μπορούν να πέσουν:';
-    return `<div class="card panel reveal">
+    const next = forced ? `Και πάει κατευθείαν σε <span class="tb" data-t="${state.forced}">${TIERS[state.forced].name}</span>`
+      : spinning ? 'Προσευχήσου.' : 'Τώρα ο δεύτερος τροχός. Πόσο θα κλάψεις;';
+    return `<div class="card panel">
       <div class="reveal-info">
         <p class="kicker">Έπεσε</p>
         <h2 class="ex-name">${esc(ex.name)}</h2>
-        ${groupChip(ex.group)}
-        <p class="how">${esc(ex.how)}</p>
-        <p class="next">${next}</p>
-        ${forced ? '' : `<ul class="ladder">${TIERS.map((t, i) => `<li data-t="${i}"><span class="tb">${t.name}</span><span>${rangeTxt(ex, i)}${ex.kg ? ' · ' + kgShort(ex, i) : ''}</span></li>`).join('')}</ul>`}
-        ${spinning ? '' : '<button class="link" type="button" data-act="skip">Δεν γίνεται εδώ, άλλαξε άσκηση</button>'}
+        <p class="taunt">${next}</p>
+        ${spinning ? '' : `<button class="link" type="button" data-act="skip">${SKIP_TXT}</button>`}
       </div>
-      ${memeHTML(ex.id)}
     </div>`;
   },
   spinTier(){ return VIEW.needTier(); },
-  needReps(){
-    const ex = state.ex, t = state.tier, [lo, hi] = ex.r[t], kg = kgTxt(ex, t);
+  needSets(){
+    const ex = state.ex, t = state.tier, kg = kgTxt(ex, t);
     return `<div class="card panel reps-panel" data-t="${t}">
       <div class="reps-info">
-        <p class="kicker">Τροχός 3 · Reps</p>
-        <h2 class="title">Πόσες ακριβώς;</h2>
-        <p class="next"><span class="tb" data-t="${t}">${TIERS[t].name}</span> ${esc(ex.name)}: από ${lo} έως ${hi} επαναλήψεις${kg ? ', ' + esc(kg) : ''}.</p>
-        <p class="fine">Κάθε νούμερο έχει την ίδια πιθανότητα. Πατάς SPIN ή τον τροχό.</p>
-        <button class="link" type="button" data-act="skip">Δεν γίνεται εδώ, άλλαξε άσκηση</button>
+        <p class="kicker"><span class="tb" data-t="${t}">${TIERS[t].name}</span> ${esc(ex.name)}${kg ? ' · ' + esc(kg) : ''}</p>
+        <h2 class="title">ΠΟΣΑ ΣΕΤ;</h2>
+        <p class="taunt">Ο τροχός αποφασίζει. Εσύ υποφέρεις.</p>
+        <button class="link" type="button" data-act="skip">${SKIP_TXT}</button>
       </div>
       <div class="reps-wheel">
-        <div class="wheel">
-          <svg class="pointer" viewBox="0 0 34 40" aria-hidden="true"><path d="M3 3h28L17 37z" style="fill:var(--gold);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/></svg>
-          <canvas id="c3" role="img" aria-label="Τροχός επαναλήψεων"></canvas>
-        </div>
+        <div class="wheel">${pointerSVG}<canvas id="c3" role="img" aria-label="Τροχός σετ"></canvas></div>
         <button class="btn spin" id="spin3" type="button" data-act="spin3">SPIN</button>
       </div>
     </div>`;
   },
-  spinReps(){ return VIEW.needReps(); },
+  spinSets(){ return VIEW.needSets(); },
   result(){
-    const ex = state.ex, t = state.tier, tier = TIERS[t], { v, lo, hi } = state.roll, big = bigV(ex, v), kg = kgTxt(ex, t);
-    const tag = hi > lo ? (v === hi ? '<b>MAX ROLL</b>' : v === lo ? '<b class="low">LOW ROLL</b>' : '') : '';
+    const ex = state.ex, t = state.tier, tier = TIERS[t], c = state.combo, kg = kgTxt(ex, t);
+    const unit = ex.unit === 'reps' ? (c.sets > 1 ? 'σετ × επαναλήψεις' : 'επαναλήψεις') : ex.unit === 'min' ? 'λεπτά' : (c.sets > 1 ? 'σετ × χρόνος' : 'χρόνος');
+    const allIn = c.sets === 1 && ex.unit !== 'min';
     return `<article class="loot" data-t="${t}">
-      <div class="loot-banner"><span class="stars" aria-hidden="true">${'★'.repeat(tier.stars)}</span>${tier.name} DROP${state.isBonus ? ' · BONUS' : ''}</div>
+      <div class="loot-banner"><span class="stars" aria-hidden="true">${'★'.repeat(tier.stars)}</span>${tier.name} · ${state.isBonus ? 'BONUS' : tier.taunt}</div>
       <div class="loot-inner">
         <div class="loot-main">
-          ${groupChip(ex.group)}
           <h2 class="ex-name">${esc(ex.name)}</h2>
-          <div class="stat"><span class="stat-num" id="stat-num">${big.num}</span><span class="stat-unit">${big.unit}</span>${kg ? `<span class="kg">${esc(kg)}</span>` : ''}</div>
-          <p class="roll">Εύρος ${tier.name}: ${rangeTxt(ex, t)} ${tag}</p>
-          <p class="rule"><b>Κανόνας:</b> ${esc(ruleText(ex, t, state.isBonus))}</p>
-          <p class="how">${esc(ex.how)}</p>
-          ${ex.unit !== 'reps' ? timerHTML() : ''}
+          <div class="stat"><span class="stat-num">${comboTxt(ex, c)}</span><span class="stat-unit">${unit}${ex.perSide ? ' · ανά πλευρά' : ''}</span></div>
+          <div class="pills">${kg ? `<span class="kg">${esc(kg)}</span>` : ''}${c.sets > 1 ? `<span class="pill">ανάσα ${tier.rest}″</span>` : ''}${allIn ? '<span class="pill hot">ALL IN 💀</span>' : ''}</div>
+          <p class="rule">${esc(ruleText(ex, t, state.isBonus))}</p>
+          ${wkHTML()}
           <div class="actions">
-            <button class="btn" type="button" data-act="done">CLEARED +${tier.xp} XP</button>
-            <button class="btn btn-ghost" type="button" data-act="fail">ΛΥΓΙΣΑ</button>
+            <button class="btn" type="button" data-act="done">ΤΟ ΕΚΑΝΑ +${tier.xp} XP</button>
+            <button class="btn btn-ghost" type="button" data-act="fail">ΛΥΓΙΣΑ 🐔</button>
           </div>
-          <button class="link" type="button" data-act="skip">Δεν γίνεται εδώ, άλλαξε άσκηση</button>
+          <button class="link" type="button" data-act="skip">${SKIP_TXT}</button>
         </div>
         <aside class="loot-side">${videoHTML(ex)}${memeHTML(ex.id, true)}</aside>
       </div>
@@ -965,15 +980,12 @@ const VIEW = {
   forced(){
     const t = state.forced;
     if (state.forcedWhy === 'bonus') return `<div class="card panel" data-t="4">${lastLine()}
-      <p class="kicker">Legendary bonus</p>
-      <h2 class="title">Το κουτί άνοιξε.</h2>
-      <p class="next">Υπάρχει κι άλλο. Ο πρώτος τροχός βγάζει δεύτερη άσκηση, και αυτή πέφτει κατευθείαν σε <span class="tb" data-t="${BONUS_TIER}">${TIERS[BONUS_TIER].name}</span></p>
+      <h2 class="title">ΤΟ ΚΟΥΤΙ ΑΝΟΙΞΕ 😈</h2>
+      <p class="taunt">Νόμιζες ότι τελείωσες; Ένα ακόμα, κατευθείαν σε <span class="tb" data-t="${BONUS_TIER}">${TIERS[BONUS_TIER].name}</span></p>
     </div>`;
     return `<div class="card panel" data-t="${t}">
-      <p class="kicker">Αλλαγή άσκησης</p>
-      <h2 class="title">Η rarity μένει ίδια.</h2>
-      <p class="next">Πάτα REROLL στον πρώτο τροχό. Η νέα άσκηση πέφτει σε <span class="tb" data-t="${t}">${TIERS[t].name}</span></p>
-      <p class="fine">Αν σου λείπει εξοπλισμός, βγάλε την άσκηση από τον τροχό στα Settings πιο κάτω.</p>
+      <h2 class="title">Σιγά μη σε πιστέψαμε.</h2>
+      <p class="taunt">Άλλη άσκηση, ίδιο <span class="tb" data-t="${t}">${TIERS[t].name}</span></p>
     </div>`;
   }
 };
@@ -987,15 +999,12 @@ function render(){
   spin1.textContent = p === 'forced' ? (state.forcedWhy === 'bonus' ? 'OPEN THE BOX' : 'REROLL') : 'SPIN';
   w1Card.classList.toggle('live', p === 'idle' || p === 'forced');
   w2Card.classList.toggle('live', p === 'needTier');
-  setBusy(p === 'spinEx' || p === 'spinTier' || p === 'spinReps');
-  if (p !== 'result') timerStop();
+  setBusy(p === 'spinEx' || p === 'spinTier' || p === 'spinSets');
+  if (p !== 'result') wkPause();
   verdict.innerHTML = VIEW[p]();
   wheel3 = null;
-  if (p === 'needReps' || p === 'spinReps') mountWheel3(p === 'spinReps');
-  if (p === 'result'){
-    countUp();
-    if (state.ex.unit !== 'reps') timerMount(secondsOf(state.ex, state.roll.v), state.ex.perSide ? 2 : 1);
-  }
+  if (p === 'needSets' || p === 'spinSets') mountWheel3(p === 'spinSets');
+  if (p === 'result') wkMount(state.ex, state.combo, TIERS[state.tier].rest);
   fitMemes(verdict);
 }
 
@@ -1004,53 +1013,39 @@ function mountWheel3(busy){
   if (!canvas || !btn) return;
   btn.disabled = busy;
   wheel3 = new Wheel(canvas, btn);
-  wheel3.setSegments(repSegments(state.ex, state.tier));
+  wheel3.setSegments(comboSegments(state.ex, state.tier));
   wheel3.rot = rand() * TAU;
   wheel3.draw();
   if (ro) ro.observe(canvas);
 }
 
-function spinReps(){
-  if (state.phase !== 'needReps' || !wheel3 || wheel3.spinning) return;
+function spinSets(){
+  if (state.phase !== 'needSets' || !wheel3 || wheel3.spinning) return;
   initAudio();
-  state.phase = 'spinReps';
+  state.phase = 'spinSets';
   $('spin3').disabled = true;
   const sk = verdict.querySelector('[data-act="skip"]');
   if (sk) sk.disabled = true;
   setBusy(true);
-  const [lo, hi] = state.ex.r[state.tier];
   wheel3.spinTo(Math.floor(rand() * wheel3.segs.length), { dur: 3800 }, seg => {
-    state.roll = { v: seg.value, lo, hi, fromWheel: true };
+    state.combo = seg.combo;
     state.phase = 'result';
     pop();
     render();
-    if (seg.value === hi) confetti([C.gold, C.fg], 50);
+    if (seg.combo.sets === 1) shake();
     scrollToEl(verdict, stacked() ? 'start' : 'nearest');
   });
-}
-
-function countUp(){
-  const el = $('stat-num'), ex = state.ex, { v, lo } = state.roll, step = ex.unit === 'sec' ? 5 : 1;
-  if (!el || reducedMotion || v === lo || state.roll.fromWheel) return;
-  const n = Math.round((v - lo) / step), dur = Math.min(900, 250 + n * 45), t0 = performance.now();
-  let last = -1;
-  const f = now => {
-    const k = Math.min(1, (now - t0) / dur), i = Math.round(n * (1 - Math.pow(1 - k, 3)));
-    if (i !== last){ last = i; el.textContent = bigV(ex, lo + i * step).num; tick(); }
-    if (k < 1) requestAnimationFrame(f);
-  };
-  requestAnimationFrame(f);
 }
 
 const stacked = () => w2Card.getBoundingClientRect().top > w1Card.getBoundingClientRect().bottom - 1;
 const scrollToEl = (el, block) => el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block });
 
-// μετά τη rarity: στις επαναλήψεις ακολουθεί ο τρίτος τροχός, στον χρόνο το νούμερο βγαίνει τυχαία
+// μετά τη rarity: τροχός σετ, εκτός από τον διάδρομο που παίρνει κατευθείαν τυχαία λεπτά
 function afterTier(tier, isBonus){
   state.tier = tier; state.isBonus = isBonus;
   state.forced = null; state.forcedWhy = null;
-  if (state.ex.unit === 'reps'){ state.roll = null; state.phase = 'needReps'; }
-  else { state.roll = roll(state.ex, tier); state.phase = 'result'; }
+  if (state.ex.unit === 'min'){ state.combo = { sets: 1, per: rollMinutes(state.ex, tier) }; state.phase = 'result'; }
+  else { state.combo = null; state.phase = 'needSets'; }
   render();
   fanfare(tier);
   if (tier === 2) confetti([C.r2, C.fg], 40);
@@ -1059,26 +1054,59 @@ function afterTier(tier, isBonus){
   scrollToEl(verdict, stacked() ? 'start' : 'nearest');
 }
 
+// ---------- το κουτί που ανοίγει ----------
+let boxDone = null, boxTimer = 0;
+function openBox(ex, done){
+  const ov = $('box-ov'), stage = $('ov-stage');
+  $('ov-name').textContent = ex.name;
+  $('ov-meme').innerHTML = memeHTML(ex.id, true);
+  boxDone = done;
+  stage.classList.remove('shake', 'open');
+  ov.hidden = false;
+  const reveal = () => {
+    stage.classList.add('open');
+    fitMemes($('ov-meme'));
+    $('ov-go').focus({ preventScroll: true });
+  };
+  if (reducedMotion){ reveal(); return; }
+  void stage.offsetWidth;
+  stage.classList.add('shake');
+  tone(70, 0.9, 'sawtooth', 0.06);
+  clearTimeout(boxTimer);
+  boxTimer = setTimeout(() => {
+    reveal();
+    tone(392, 0.15, 'square', 0.07); tone(523, 0.15, 'square', 0.07, 0.08); tone(784, 0.4, 'square', 0.07, 0.16);
+    confetti([C.gold, C.r3, C.fg], 70);
+  }, 900);
+}
+function closeBox(){
+  const ov = $('box-ov');
+  if (ov.hidden) return;
+  clearTimeout(boxTimer);
+  ov.hidden = true;
+  const f = boxDone; boxDone = null;
+  if (f) f();
+}
+$('ov-go').addEventListener('click', closeBox);
+$('box-ov').addEventListener('click', e => { if (e.target === e.currentTarget && $('ov-stage').classList.contains('open')) closeBox(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBox(); });
+
 spin1.addEventListener('click', () => {
   if (wheel1.spinning || wheel2.spinning || !(state.phase === 'idle' || state.phase === 'forced')) return;
   initAudio();
   const forced = state.phase === 'forced' ? state.forced : null, why = state.forcedWhy;
-  state.ex = null; state.tier = null; state.last = null; state.flash = '';
+  state.ex = null; state.tier = null; state.combo = null; state.last = null; state.flash = '';
   wheel1.winner = null; wheel2.winner = null; wheel2.draw();
   state.phase = 'spinEx';
   render();
   wheel1.spinTo(Math.floor(rand() * wheel1.segs.length), {}, seg => {
     state.ex = seg.ex;
-    pop();
-    if (forced != null){
-      state.phase = 'spinTier';
-      render();
-      wheel2.spinTo(forced, { dur: 1800, turns: 1 }, () => afterTier(forced, why === 'bonus'));
-    } else {
-      state.phase = 'needTier';
-      render();
-      if (stacked()) scrollToEl(verdict, 'start');
-    }
+    state.phase = forced != null ? 'spinTier' : 'needTier';
+    render();
+    openBox(seg.ex, () => {
+      if (forced != null) wheel2.spinTo(forced, { dur: 1800, turns: 1 }, () => afterTier(forced, why === 'bonus'));
+      else if (stacked()) scrollToEl(w2Card, 'start');
+    });
   });
 });
 
@@ -1093,17 +1121,18 @@ spin2.addEventListener('click', () => {
 });
 
 function outcome(ok){
-  const ex = state.ex, t = state.tier, gained = ok ? TIERS[t].xp : 0;
-  const e = { at: Date.now(), ex: ex.id, t, v: state.roll.v, ok, xp: gained, bonus: state.isBonus };
+  const ex = state.ex, t = state.tier, c = state.combo, gained = ok ? TIERS[t].xp : 0;
+  const e = { at: Date.now(), ex: ex.id, t, s: c.sets, v: c.per, ok, xp: gained, bonus: state.isBonus };
   log.push(e); store.set(LOG_KEY, log);
   const before = levelOf(xp);
   xp += gained; store.set('pbox2-xp', xp);
   const after = levelOf(xp);
-  paintPlayer(); renderLog();
-  if (gained){ coin(); toast('+' + gained + ' XP'); }
-  if (after > before) setTimeout(() => { levelUpSound(); toast('LEVEL UP! LVL ' + after); confetti([C.gold, C.r4, C.fg], 90); }, 700);
+  renderLog();
+  state.quip = pickOne(ok ? HYPE : ROAST);
+  if (gained){ coin(); toast('+' + gained + ' XP'); } else { sadTrombone(); toast(state.quip); }
+  if (after > before) setTimeout(() => { levelUpSound(); toast('LEVEL UP! LVL ' + after); confetti([C.gold, C.r4, C.fg], 90); }, 900);
   const pandora = t === 4 && !state.isBonus;
-  state.ex = null; state.tier = null; state.roll = null; state.isBonus = false; state.last = e;
+  state.ex = null; state.tier = null; state.combo = null; state.isBonus = false; state.last = e; state.idleLine = pickOne(IDLE);
   wheel1.winner = null; wheel2.winner = null; wheel1.draw(); wheel2.draw();
   if (pandora){ state.phase = 'forced'; state.forced = BONUS_TIER; state.forcedWhy = 'bonus'; }
   else state.phase = 'idle';
@@ -1115,10 +1144,10 @@ function skip(){
   if (state.phase === 'needTier'){
     state.phase = 'idle'; state.flash = 'swap';
     wheel2.winner = null; wheel2.draw();
-  } else if (state.phase === 'result' || state.phase === 'needReps'){
+  } else if (state.phase === 'result' || state.phase === 'needSets'){
     // η rarity δεν ξαναπαίζεται: αλλάζει μόνο η άσκηση
     state.forced = state.tier; state.forcedWhy = state.isBonus ? 'bonus' : 'swap';
-    state.tier = null; state.roll = null; state.isBonus = false;
+    state.tier = null; state.combo = null; state.isBonus = false;
     state.phase = 'forced';
   } else return;
   state.ex = null;
@@ -1134,9 +1163,9 @@ verdict.addEventListener('click', e => {
   if (a === 'done') outcome(true);
   else if (a === 'fail') outcome(false);
   else if (a === 'skip') skip();
-  else if (a === 'spin3') spinReps();
-  else if (a === 't-start') timerToggle();
-  else if (a === 't-reset') timerMount(T.total, T.rounds);
+  else if (a === 'spin3') spinSets();
+  else if (a === 'wk-main') wkMain();
+  else if (a === 'wk-reset') wkMount(W.ex, W.combo, W.rest);
 });
 
 // ---------- player bar ----------
@@ -1145,7 +1174,6 @@ function paintPlayer(){
   $('lvl').textContent = lv;
   $('xp-fill').style.width = ((xp - a) / (b - a) * 100) + '%';
   $('xp-text').textContent = (xp - a) + ' / ' + (b - a) + ' XP';
-  $('xp-today').textContent = 'Σήμερα +' + log.reduce((s, e) => s + (e.xp || 0), 0) + ' XP';
 }
 
 // ---------- λίστα ημέρας ----------
@@ -1157,12 +1185,12 @@ function renderLog(){
     return `<li>
       <span class="l-time">${time}</span>
       <span class="l-ex">${esc(ex.name)}${e.bonus ? '<i>BONUS</i>' : ''}</span>
-      <span class="l-meta"><span class="tb" data-t="${e.t}">${TIERS[e.t].name}</span>${fmtV(ex, e.v)}${ex.kg ? ' · ' + kgShort(ex, e.t) : ''}</span>
-      <span class="l-out ${e.ok ? 'ok' : 'no'}">${e.ok ? '+' + e.xp + ' XP' : 'FAIL'}</span>
+      <span class="l-meta"><span class="tb" data-t="${e.t}">${TIERS[e.t].name}</span>${comboTxt(ex, { sets: e.s || 1, per: e.v })}${ex.kg ? ' · ' + kgShort(ex, e.t) : ''}</span>
+      <span class="l-out ${e.ok ? 'ok' : 'no'}">${e.ok ? '+' + e.xp + ' XP' : '🐔'}</span>
     </li>`;
-  }).join('') : '<li class="empty">Τίποτα ακόμα. Ό,τι πέσει σήμερα γράφεται εδώ.</li>';
+  }).join('') : '<li class="empty">Άδειο. Όπως και η αντοχή σου.</li>';
   const done = log.filter(e => e.ok).length;
-  $('log-sum').textContent = log.length ? `${log.length} drops · ${done} cleared` : '';
+  $('log-sum').textContent = log.length ? `${done} ✓ · ${log.length - done} 🐔` : '';
   clearBtn.hidden = !log.length;
   paintPlayer();
 }
@@ -1216,20 +1244,12 @@ function renderSettings(){
 function refreshEx(){
   wheel1.setSegments(exSegments());
   wheel1.draw();
-  const n = wheel1.segs.length;
-  $('hint1').textContent = `${n} ασκήσεις, ${pctText(1 / n)} πιθανότητα η καθεμία. Πατάς και τον τροχό.`;
-  $('groups').innerHTML = Object.keys(GROUPS).map(g => {
-    const c = EX.filter(e => e.group === g && enabled.includes(e.id)).length;
-    return c ? `<span class="chip" style="--c:var(${GROUPS[g].color})"><i></i>${GROUPS[g].name} ${c}</span>` : '';
-  }).join('');
 }
 function refreshTier(){
   wheel2.setSegments(tierSegments());
   wheel2.draw();
   const sum = oddsSum();
-  $('rarity').innerHTML = TIERS.map((t, i) => `<li data-t="${i}"><span class="stars" aria-hidden="true">${'★'.repeat(t.stars)}</span><span class="rn">${t.name}</span><span class="pc">${pctText(odds[i] / sum)}</span></li>`).join('');
-  $('odds-note').textContent = sum === 100 ? 'Σύνολο 100%.'
-    : `Σύνολο ${sum}%. Ο τροχός τα μοιράζει αναλογικά, τα πραγματικά ποσοστά φαίνονται κάτω από τον τροχό.`;
+  $('odds-note').textContent = sum === 100 ? 'Σύνολο 100%.' : `Σύνολο ${sum}%. Ο τροχός τα μοιράζει αναλογικά (π.χ. Common ${pctText(odds[0] / sum)}).`;
 }
 oddsEl.addEventListener('input', e => {
   const inp = e.target, i = +inp.id.slice(4);
@@ -1239,7 +1259,6 @@ oddsEl.addEventListener('input', e => {
   const next = odds.slice(); next[i] = v;
   if (!next.some(n => n > 0)){ $('odds-note').textContent = 'Τουλάχιστον μία rarity χρειάζεται πιθανότητα πάνω από 0.'; return; }
   odds = next; saveSettings(); refreshTier();
-  if (state.phase === 'idle') render();
 });
 oddsEl.addEventListener('change', e => { const i = +e.target.id.slice(4); e.target.value = odds[i]; });
 exListEl.addEventListener('change', e => {
@@ -1253,7 +1272,6 @@ $('reset').addEventListener('click', () => {
   odds = DEFAULT_ODDS.slice(); enabled = EX.map(e => e.id);
   saveSettings(); renderSettings(); refreshEx(); refreshTier();
   $('ex-note').textContent = 'Βγάλε ό,τι δεν έχει το γυμναστήριό σου.';
-  if (state.phase === 'idle') render();
 });
 
 // ---------- ήχος on/off ----------
@@ -1275,22 +1293,23 @@ renderDrops();
 renderLog();
 paintSound();
 
-// #demo δείχνει κατευθείαν μια κάρτα drop (για έλεγχο της εμφάνισης)
+// #demo δείχνει κατευθείαν μια κάρτα drop, #demo-box το κουτί ανοιχτό (για έλεγχο της εμφάνισης)
 if (location.hash === '#demo'){
-  state.ex = exById('farmer'); state.tier = 3; state.roll = roll(state.ex, 3); state.phase = 'result';
+  state.ex = exById('farmer'); state.tier = 3; state.combo = setCombos(state.ex, 3)[3]; state.phase = 'result';
   wheel1.winner = 'farmer'; wheel2.winner = 't3';
 }
 render();
+if (location.hash === '#demo-box') openBox(exById('hang'), null);
 
 const drawAll = () => { wheel1.draw(); wheel2.draw(); if (wheel3) wheel3.draw(); };
 if ('ResizeObserver' in window){ ro = new ResizeObserver(drawAll); ro.observe($('c1')); ro.observe($('c2')); }
 else window.addEventListener('resize', drawAll);
 if (document.fonts && document.fonts.load){
   Promise.all([
-    document.fonts.load('20px Bangers', 'SPIN COMMON LEGENDARY Plank'),
+    document.fonts.load('20px Bangers', 'SPIN COMMON LEGENDARY Plank 3x20'),
     document.fonts.load('20px Anton', 'MY GRIP'),
     document.fonts.ready
-  ]).then(() => { drawAll(); fitMemes(verdict); }, drawAll);
+  ]).then(() => { drawAll(); fitMemes(document.body); }, drawAll);
 }
 })();
 </script>
