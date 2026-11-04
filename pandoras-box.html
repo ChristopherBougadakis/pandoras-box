@@ -82,7 +82,7 @@ a{color:var(--gold)}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:18px 48px;display:grid;gap:26px}
 @media (min-width:720px){.wrap{padding-inline:28px}}
 /* μονόστηλα grid: η στήλη δεν φαρδαίνει από το μεγαλύτερο κείμενο */
-.wrap,.play,.panel,.loot-inner,.loot-main,.loot-side,.timer,.log-block,.set-body,.odds,.xp,.ov-card{grid-template-columns:minmax(0,1fr)}
+.wrap,.play,.panel,.loot-inner,.loot-main,.loot-video,.loot-meme,.timer,.log-block,.set-body,.odds,.xp,.ov-card{grid-template-columns:minmax(0,1fr)}
 
 /* header */
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px}
@@ -148,10 +148,12 @@ a{color:var(--gold)}
 .loot-banner{position:relative;z-index:1;background:var(--tier);color:var(--ink);font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,6vw,2.3rem);letter-spacing:.07em;line-height:1.05;text-align:center;padding:10px 12px 6px;overflow:hidden}
 .loot[data-t="6"] .loot-banner{background:var(--rainbow)}
 .loot-banner::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 2.4s ease-in-out .3s infinite}
-.loot-inner{position:relative;z-index:1;padding:clamp(16px,3.5vw,28px);display:grid;gap:22px}
-@media (min-width:820px){.loot-inner{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}}
-.loot-main{display:grid;gap:16px;min-width:0;align-content:start}
-.loot-side{display:grid;gap:16px;min-width:0;justify-items:center;align-content:start}
+.loot-inner{position:relative;z-index:1;padding:clamp(16px,3.5vw,28px);display:grid;gap:22px;grid-template-areas:"video" "main" "meme"}
+@media (min-width:820px){.loot-inner{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-areas:"main video" "main meme";align-items:start}}
+.loot-main{grid-area:main;display:grid;gap:16px;min-width:0;align-content:start}
+.loot-video,.loot-meme{min-width:0;display:grid;justify-items:center;align-content:start}
+.loot-video{grid-area:video}
+.loot-meme{grid-area:meme}
 .stat-num{font-family:var(--display);font-weight:400;font-size:clamp(4.4rem,16vw,7.4rem);line-height:.85;letter-spacing:.02em;font-variant-numeric:tabular-nums;text-shadow:0 5px 0 rgba(0,0,0,.45),0 0 34px var(--tier)}
 .pills{display:flex;flex-wrap:wrap;gap:8px}
 .pills:empty{display:none}
@@ -970,6 +972,7 @@ const VIEW = {
     return `<article class="loot" data-t="${t}">
       <div class="loot-banner">${tier.name} · ${state.isBonus ? 'BONUS' : tier.taunt}</div>
       <div class="loot-inner">
+        ${VIDEOS[ex.id] ? `<div class="loot-video">${videoHTML(ex)}</div>` : ''}
         <div class="loot-main">
           <div class="name-row"><h2 class="ex-name">${esc(ex.name)}</h2>${diffBadge(ex)}</div>
           <div class="stat-num">${comboTxt(ex, c)}</div>
@@ -981,7 +984,7 @@ const VIEW = {
           </div>
           <button class="link" type="button" data-act="skip">Δεν έχω εξοπλισμό</button>
         </div>
-        <aside class="loot-side">${videoHTML(ex)}${memeHTML(ex.id, true)}</aside>
+        <div class="loot-meme">${memeHTML(ex.id, true)}</div>
       </div>
     </article>`;
   },
