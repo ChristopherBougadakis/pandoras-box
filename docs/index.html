@@ -37,6 +37,14 @@
   --g-biceps:#9a3b8e;
   --g-push:#a2661b;
   --g-cardio:#3c4ca0;
+  --d0:#17463f;
+  --d0-hi:#7ff0dc;
+  --d1:#4a3d0e;
+  --d1-hi:#ffe066;
+  --d2:#5a2410;
+  --d2-hi:#ffab70;
+  --d3:#5c0c21;
+  --d3-hi:#ff6b8b;
   --scrim:rgba(8,6,20,.88);
   --meme-paper:#ffffff;
   --meme-text:#111111;
@@ -133,9 +141,11 @@ a{color:var(--gold)}
 .panel[data-t]{border-color:var(--tier);box-shadow:0 0 40px -10px var(--tier),0 6px 0 rgba(0,0,0,.35)}
 .title{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,8vw,3.8rem);line-height:.95;letter-spacing:.03em}
 .ex-name{font-family:var(--display);font-weight:400;font-size:clamp(2.5rem,8.5vw,4.2rem);line-height:.9;letter-spacing:.03em}
-.pips{display:inline-flex;gap:4px;vertical-align:middle}
-.pips i{width:10px;height:22px;border-radius:3px;background:var(--panel-2)}
-.pips i.on{background:var(--r5);box-shadow:0 0 10px -2px var(--r5)}
+[data-d="0"]{--dt:var(--d0);--dt-hi:var(--d0-hi)}
+[data-d="1"]{--dt:var(--d1);--dt-hi:var(--d1-hi)}
+[data-d="2"]{--dt:var(--d2);--dt-hi:var(--d2-hi)}
+[data-d="3"]{--dt:var(--d3);--dt-hi:var(--d3-hi)}
+.dtb{display:inline-block;font-family:var(--display);font-weight:400;font-size:1.2rem;letter-spacing:.06em;line-height:1;padding:6px 10px 4px;border-radius:8px;background:var(--dt);color:var(--dt-hi);border:2px solid var(--dt-hi);white-space:nowrap}
 .name-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
 
 /* loot card */
@@ -380,7 +390,7 @@ legend{padding:0;margin-bottom:10px;font-size:.76rem;font-weight:800;letter-spac
     </svg>
     <div class="ov-card" role="dialog" aria-modal="true" aria-labelledby="ov-name">
       <h2 class="ex-name" id="ov-name"></h2>
-      <span id="ov-pips"></span>
+      <span id="ov-tier"></span>
       <div id="ov-meme"></div>
       <button class="btn" id="ov-go" type="button">ΠΑΜΕ</button>
       <button class="link" id="ov-skip" type="button">Δεν έχω εξοπλισμό</button>
@@ -426,15 +436,15 @@ const SET_SHARE = [0, 1, 0.7, 0.55, 0.47, 0.42];
 const HYPE = ['Ok, δεν είσαι εντελώς άχρηστος.', 'Light weight baby!', 'Stay hard.', 'Θες και χειροκρότημα;', 'Καλό. Και τώρα ξανά.'];
 const ROAST = ['Skill issue.', 'Η γιαγιά μου το έβγαλε με τη μία.', 'Το κουτί γελάει.', '0 XP. Κλάψε.', 'bok bok bok'];
 
-// Κρυφή δυσκολία της άσκησης: οι δύσκολες πέφτουν σπανιότερα από τον πρώτο τροχό και δίνουν περισσότερο XP
-const DIFF = [{ w: 4, mult: 1 }, { w: 3, mult: 1.25 }, { w: 2, mult: 1.5 }, { w: 1, mult: 2 }];
+// Tiers δυσκολίας των ασκήσεων: ο πρώτος τροχός δείχνει τα tiers, όχι ποιες ασκήσεις έχει το καθένα.
+// Τα δύσκολα πέφτουν σπανιότερα (w ανά άσκηση) και δίνουν περισσότερο XP.
+const DIFF = [{ name: 'C TIER', w: 4, mult: 1 }, { name: 'B TIER', w: 3, mult: 1.25 }, { name: 'A TIER', w: 2, mult: 1.5 }, { name: 'S TIER', w: 1, mult: 2 }];
 const DIFF_OF = {
   bicycle: 0, deadbug: 0, legraise: 0, wristcurl: 0, revwrist: 0,
   climbers: 1, curl: 1, hammer: 1, pushup: 1, sideplank: 1,
   plank: 2, farmer: 2, isocurl: 2, pushhold: 2, hollow: 2, abwheel: 2,
   hang: 3, pinch: 3, wpushup: 3, treadmill: 3
 };
-const MYSTERY_SLICES = 12;
 
 // r = βάση για COMMON..LEGENDARY (επαναλήψεις, δευτερόλεπτα ή λεπτά), kg = βάρος ανά rarity
 const EX = [
@@ -575,7 +585,7 @@ function kgShort(ex, t){ if (!ex.kg) return ''; const k = ex.kg[t]; return k ===
 function kgTxt(ex, t){ if (!ex.kg) return ''; const k = ex.kg[t]; return k === 0 ? 'χωρίς βάρος' : k + ' kg' + (ex.kgNote ? ' ' + ex.kgNote : ''); }
 function pctText(x){ const v = Math.round(x * 1000) / 10; return (Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',')) + '%'; }
 const xpFor = (ex, t) => Math.round(TIERS[t].xp * DIFF[ex.d].mult);
-const pipsHTML = ex => `<span class="pips" role="img" aria-label="Δυσκολία ${ex.d + 1} από 4">${[0, 1, 2, 3].map(i => `<i${i <= ex.d ? ' class="on"' : ''}></i>`).join('')}</span>`;
+const diffBadge = ex => `<span class="dtb" data-d="${ex.d}">${DIFF[ex.d].name}</span>`;
 
 // συνδυασμοί σετ για τον τρίτο τροχό: από 1 σετ (όλη η βάση) έως 5 μικρότερα
 function setCombos(ex, t){
@@ -664,7 +674,7 @@ const scrollToEl = el => el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 
 // ---------- τροχός ----------
 const C = {};
 const rootStyle = getComputedStyle(document.documentElement);
-['bg','fg','muted','ink','gold','gold-deep','panel-2','line','r0','r1','r2','r3','r4','r5','r6']
+['bg','fg','muted','ink','gold','gold-deep','panel-2','line','r0','r1','r2','r3','r4','r5','r6','d0','d1','d2','d3','d0-hi','d1-hi','d2-hi','d3-hi']
   .forEach(k => { C[k] = rootStyle.getPropertyValue('--' + k).trim(); });
 const RAINBOW = ['r5', 'gold', 'r1', 'r2', 'r3'];
 
@@ -721,21 +731,11 @@ class Wheel {
       ctx.stroke();
 
       const label = win && s.winLabel ? s.winLabel : s.label;
-      let fs = Math.min(s.big && !win ? R * 0.2 : R * 0.1, span * R * 0.42);
+      let fs = Math.min(R * 0.1, span * R * 0.42);
       ctx.font = fs + 'px ' + WHEEL_FONT;
       const w = ctx.measureText(label).width;
       if (w > avail){ fs *= avail / w; ctx.font = fs + 'px ' + WHEEL_FONT; }
-      if (fs >= 7 && s.upright && !win){
-        // τα «?» μένουν όρθια όπως κι αν γυρίσει ο τροχός
-        const a = (s.start + s.end) / 2, rr = (R + hubR) / 2 + 8;
-        ctx.save();
-        ctx.translate(Math.sin(a) * rr, -Math.cos(a) * rr);
-        ctx.rotate(-this.rot);
-        ctx.textAlign = 'center';
-        ctx.fillStyle = s.text;
-        ctx.fillText(label, 0, 1);
-        ctx.restore();
-      } else if (fs >= 7){
+      if (fs >= 7){
         ctx.save();
         ctx.rotate((s.start + s.end) / 2 - Math.PI / 2);
         ctx.fillStyle = win && s.winText ? s.winText : s.text;
@@ -792,10 +792,19 @@ class Wheel {
   }
 }
 
-// ο πρώτος τροχός δεν δείχνει ασκήσεις: ίδια κομμάτια με «?», η άσκηση γράφεται μόνο στο κομμάτι που κερδίζει
-function mysterySegments(text){
-  return Array.from({ length: MYSTERY_SLICES }, (_, i) => ({ key: 'm' + i, w: 1, label: '?', big: true, upright: true,
-    fill: i % 2 ? C['panel-2'] : C.line, text: text || C.gold, winFill: C.gold, winText: C.ink }));
+// ο πρώτος τροχός: κάθε tier δυσκολίας δύο φορές, με μέγεθος ανάλογο της πιθανότητας να πέσει
+const tierWeight = d => EX.filter(e => e.d === d && enabled.includes(e.id)).length * DIFF[d].w;
+function diffSegments(){
+  const segs = [];
+  for (let rep = 0; rep < 2; rep++) DIFF.forEach((t, d) => {
+    const w = tierWeight(d) / 2;
+    if (w > 0) segs.push({ key: 'd' + d + '_' + rep, d, w, label: t.name, fill: C['d' + d], text: C['d' + d + '-hi'], winFill: C['d' + d + '-hi'], winText: C.ink });
+  });
+  return segs;
+}
+// ο τρίτος τροχός πριν βγει η rarity: μόνο το πλήθος των σετ
+function setsPlaceholder(){
+  return Array.from({ length: 10 }, (_, i) => ({ key: 'p' + i, w: 1, label: (i % 5 + 1) + 'x', fill: i % 2 ? C['panel-2'] : C.line, text: C.muted }));
 }
 function tierSegments(){
   return TIERS.map((t, i) => ({ key: 't' + i, w: odds[i], label: t.name, fill: C['r' + i], rainbow: i === 6, text: C.ink }));
@@ -804,9 +813,9 @@ function comboSegments(ex, t){
   return setCombos(ex, t).map((combo, i) => ({ key: 'c' + i, combo, w: 1, label: comboTxt(ex, combo), fill: C['r' + t],
     rainbow: t === 6, overlay: i % 2 ? 'rgba(255,255,255,0.25)' : null, text: C.ink }));
 }
-function pickExercise(){
-  const pool = EX.filter(e => enabled.includes(e.id));
-  return pool[pickWeighted(pool.map(e => DIFF[e.d].w))];
+function refreshEx(){
+  wheel1.setSegments(diffSegments());
+  wheel1.draw();
 }
 
 // ---------- σετ, ανάσες & χρονόμετρο ----------
@@ -956,7 +965,7 @@ wheel1.rot = rand() * TAU;
 wheel3.rot = rand() * TAU;
 
 function resetWheel3(){
-  wheel3.setSegments(mysterySegments(C.muted));
+  wheel3.setSegments(setsPlaceholder());
   wheel3.winner = null;
   wheel3.draw();
 }
@@ -968,7 +977,7 @@ const VIEW = {
       <div class="loot-banner">${tier.name} · ${state.isBonus ? 'BONUS' : tier.taunt}</div>
       <div class="loot-inner">
         <div class="loot-main">
-          <div class="name-row"><h2 class="ex-name">${esc(ex.name)}</h2>${pipsHTML(ex)}</div>
+          <div class="name-row"><h2 class="ex-name">${esc(ex.name)}</h2>${diffBadge(ex)}</div>
           <div class="stat-num">${comboTxt(ex, c)}</div>
           <div class="pills">${kg ? `<span class="kg">${esc(kg)}</span>` : ''}${ex.perSide ? '<span class="pill">ανά πλευρά</span>' : ''}${c.sets > 1 ? `<span class="pill">ανάσα ${tier.rest}″</span>` : ''}${c.sets === 1 && ex.unit !== 'min' ? '<span class="pill hot">ALL IN</span>' : ''}</div>
           ${wkHTML()}
@@ -1040,7 +1049,7 @@ let boxDone = null, boxTimer = 0;
 function openBox(ex, done){
   const ov = $('box-ov'), stage = $('ov-stage');
   $('ov-name').textContent = ex.name;
-  $('ov-pips').innerHTML = pipsHTML(ex);
+  $('ov-tier').innerHTML = diffBadge(ex);
   $('ov-meme').innerHTML = memeHTML(ex.id, true);
   boxDone = done;
   stage.classList.remove('shake', 'open');
@@ -1083,10 +1092,12 @@ spin1.addEventListener('click', () => {
   resetWheel3();
   state.phase = 'spinEx';
   render();
-  const ex = pickExercise(), idx = Math.floor(rand() * wheel1.segs.length);
+  // πρώτα το tier δυσκολίας (το κομμάτι του τροχού), μετά τυχαία άσκηση μέσα σε αυτό
+  const idx = pickWeighted(wheel1.segs.map(s => s.w)), seg = wheel1.segs[idx];
+  const ex = pickOne(EX.filter(e => e.d === seg.d && enabled.includes(e.id)));
   wheel1.segs.forEach(s => { s.winLabel = null; });
-  wheel1.segs[idx].winLabel = ex.short;
   wheel1.spinTo(idx, {}, () => {
+    seg.winLabel = ex.short;
     state.ex = ex;
     state.phase = forced != null ? 'spinTier' : 'needTier';
     render();
@@ -1260,11 +1271,11 @@ exListEl.addEventListener('change', e => {
   const next = inp.checked ? EX.map(x => x.id).filter(x => x === id || enabled.includes(x)) : enabled.filter(x => x !== id);
   if (next.length < 2){ inp.checked = true; $('ex-note').textContent = 'Χρειάζονται τουλάχιστον 2 ασκήσεις στον τροχό.'; return; }
   $('ex-note').textContent = 'Βγάλε ό,τι δεν έχει το γυμναστήριό σου.';
-  enabled = next; saveSettings();
+  enabled = next; saveSettings(); refreshEx();
 });
 $('reset').addEventListener('click', () => {
   odds = DEFAULT_ODDS.slice(); enabled = EX.map(e => e.id);
-  saveSettings(); renderSettings(); refreshTier();
+  saveSettings(); renderSettings(); refreshEx(); refreshTier();
   $('ex-note').textContent = 'Βγάλε ό,τι δεν έχει το γυμναστήριό σου.';
 });
 
@@ -1280,7 +1291,7 @@ soundBtn.addEventListener('click', () => {
 });
 
 // ---------- εκκίνηση ----------
-wheel1.setSegments(mysterySegments());
+refreshEx();
 resetWheel3();
 renderSettings();
 refreshTier();
@@ -1291,7 +1302,8 @@ paintSound();
 // #demo δείχνει κατευθείαν μια κάρτα drop, #demo-box το κουτί ανοιχτό (για έλεγχο της εμφάνισης)
 if (location.hash === '#demo'){
   state.ex = exById('farmer'); state.tier = 5; state.combo = setCombos(state.ex, 5)[3]; state.phase = 'result';
-  wheel1.segs[0].winLabel = state.ex.short; wheel1.winner = 'm0'; wheel2.winner = 't5';
+  const s0 = wheel1.segs.find(s => s.d === state.ex.d);
+  s0.winLabel = state.ex.short; wheel1.winner = s0.key; wheel2.winner = 't5';
   wheel3.setSegments(comboSegments(state.ex, 5)); wheel3.winner = 'c3';
 }
 render();
